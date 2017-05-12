@@ -1,0 +1,7 @@
+services:
+    app.event.subscriber.origin_http_header:
+        class: AppBundle\Event\Subscriber\OriginHttpHeaderSubscriber
+        arguments:
+            - "%allowed_origins%"
+        tags:
+            - { name: kernel.event_subscriber }
