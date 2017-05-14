@@ -1,0 +1,6 @@
+services:
+    app.manager.project:
+        class: AppBundle\Manager\ProjectManager
+        arguments:
+            - "@filesystem"
+            - "%projects_root_dir%"
