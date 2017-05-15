@@ -2,6 +2,7 @@
 
 namespace AppBundle\Manager;
 
+use AppBundle\Exception\ProjectNotFoundException;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 
@@ -55,5 +56,32 @@ class ProjectManager
         }
 
         return $projects;
+    }
+
+    /**
+     * @param string $projectSlug
+     *
+     * @return array
+     *
+     * @throws ProjectNotFoundException
+     */
+    public function getProject($projectSlug)
+    {
+        $dirName = sprintf('%s/%s', $this->projectsDir, $projectSlug);
+        if (!$this->filesystem->exists($dirName)) {
+            throw new ProjectNotFoundException();
+        }
+
+        $features = [];
+        $finder = new Finder();
+        $finder->files()->name('*.feature')->in($this->projectsDir);
+
+        foreach ($finder as $feature) {
+            $features[] = [
+                'slug' => $feature->getBasename()
+            ];
+        }
+
+        return $features;
     }
 }
