@@ -71,7 +71,7 @@ class ProjectManager
 
         $features = [];
         $finder = new Finder();
-        $finder->files()->name('*.feature')->in($this->projectsDir);
+        $finder->files()->name('*.feature')->in($dirName);
 
         foreach ($finder as $feature) {
             $features[] = [
@@ -79,7 +79,10 @@ class ProjectManager
             ];
         }
 
-        return $features;
+        return [
+            'name' => $this->retrieveProjectConfig($projectSlug)['name'],
+            'features' => $features
+        ];
     }
 
     /**
