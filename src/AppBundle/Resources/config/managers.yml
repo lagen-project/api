@@ -4,3 +4,4 @@ services:
         arguments:
             - "@filesystem"
             - "%projects_root_dir%"
+            - "@slugify"
