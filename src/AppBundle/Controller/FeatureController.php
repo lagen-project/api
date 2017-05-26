@@ -3,13 +3,14 @@
 namespace AppBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class FeatureController extends Controller
 {
     /**
-     * @Route("/project/{projectId}/features", methods={"GET"})
+     * @Route("/projects/{projectId}/features", methods={"GET"})
      *
      * @return Response
      */
@@ -19,7 +20,7 @@ class FeatureController extends Controller
     }
 
     /**
-     * @Route("/project/{projectId}/features/{featureId}", methods={"GET"})
+     * @Route("/projects/{projectId}/features/{featureId}", methods={"GET"})
      *
      * @param Request $request
      *
@@ -31,19 +32,23 @@ class FeatureController extends Controller
     }
 
     /**
-     * @Route("/project/{projectId}/features", methods={"POST"})
+     * @Route("/projects/{projectSlug}/features", methods={"POST"})
      *
+     * @param string $projectSlug
      * @param Request $request
      *
      * @return Response
      */
-    public function postAction(Request $request)
+    public function postAction($projectSlug, Request $request)
     {
-        return $this->handleResponse([], Response::HTTP_CREATED);
+        $requestContent = json_decode($request->getContent(), true);
+        $this->get('app.manager.feature')->createFeature($projectSlug, $requestContent['name']);
+
+        return new JsonResponse(null, Response::HTTP_CREATED);
     }
 
     /**
-     * @Route("/project/{projectId}/features/{id}", methods={"PUT"})
+     * @Route("/projects/{projectId}/features/{id}", methods={"PUT"})
      *
      * @param Request $request
      *

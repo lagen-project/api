@@ -49,6 +49,14 @@ class FeatureParser
      */
     private $step;
 
+    private function init()
+    {
+        $this->index = 0;
+        $this->feature = null;
+        $this->scenario = null;
+        $this->step = null;
+    }
+
     /**
      * @param string $filename
      *
@@ -56,6 +64,7 @@ class FeatureParser
      */
     public function parse($filename)
     {
+        $this->init();
         $this->contents = file($filename);
         $this->index = 0;
         while ($this->index < count($this->contents)) {

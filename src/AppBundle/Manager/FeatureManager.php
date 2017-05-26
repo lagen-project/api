@@ -2,6 +2,7 @@
 
 namespace AppBundle\Manager;
 
+use Cocur\Slugify\Slugify;
 use Symfony\Component\Filesystem\Filesystem;
 
 class FeatureManager
@@ -17,12 +18,36 @@ class FeatureManager
     private $projectsDir;
 
     /**
-     * @param Filesystem $filesystem
-     * @param $projectsDir
+     * @var Slugify
      */
-    public function __construct(Filesystem $filesystem, $projectsDir)
+    private $slugify;
+
+    /**
+     * @param Filesystem $filesystem
+     * @param string $projectsDir
+     * @param Slugify $slugify
+     */
+    public function __construct(Filesystem $filesystem, $projectsDir, Slugify $slugify)
     {
         $this->filesystem = $filesystem;
         $this->projectsDir = $projectsDir;
+        $this->slugify = $slugify;
+    }
+
+    /**
+     * @param string $projectSlug
+     * @param string $featureName
+     */
+    public function createFeature($projectSlug, $featureName)
+    {
+        file_put_contents(
+            sprintf(
+                '%s/%s/%s.feature',
+                $this->projectsDir,
+                $projectSlug,
+                $this->slugify->slugify($featureName)
+            ),
+            sprintf("Feature: $featureName\n")
+        );
     }
 }

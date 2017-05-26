@@ -1,4 +1,10 @@
 services:
+    app.manager.feature:
+        class: AppBundle\Manager\FeatureManager
+        arguments:
+            - "@filesystem"
+            - "%projects_root_dir%"
+            - "@slugify"
     app.manager.project:
         class: AppBundle\Manager\ProjectManager
         arguments:
