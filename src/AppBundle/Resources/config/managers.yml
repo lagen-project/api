@@ -5,3 +5,4 @@ services:
             - "@filesystem"
             - "%projects_root_dir%"
             - "@slugify"
+            - "@app.parser.feature"

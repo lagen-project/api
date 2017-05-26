@@ -3,6 +3,7 @@
 namespace AppBundle\Manager;
 
 use AppBundle\Exception\ProjectNotFoundException;
+use AppBundle\Parser\FeatureParser;
 use Cocur\Slugify\Slugify;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
@@ -25,15 +26,26 @@ class ProjectManager
     private $slugify;
 
     /**
+     * @var FeatureParser
+     */
+    private $featureParser;
+
+    /**
      * @param Filesystem $filesystem
      * @param $projectsDir
      * @param Slugify $slugify
+     * @param FeatureParser $featureParser
      */
-    public function __construct(Filesystem $filesystem, $projectsDir, Slugify $slugify)
-    {
+    public function __construct(
+        Filesystem $filesystem,
+        $projectsDir, Slugify
+        $slugify,
+        FeatureParser $featureParser
+    ) {
         $this->filesystem = $filesystem;
         $this->projectsDir = $projectsDir;
         $this->slugify = $slugify;
+        $this->featureParser = $featureParser;
     }
 
     /**
@@ -75,7 +87,8 @@ class ProjectManager
 
         foreach ($finder as $feature) {
             $features[] = [
-                'slug' => $feature->getBasename()
+                'slug' => $feature->getBasename(),
+                'name' => $this->featureParser->parse($feature->getPathname())->getName()
             ];
         }
 
