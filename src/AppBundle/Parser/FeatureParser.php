@@ -156,7 +156,7 @@ class FeatureParser
                 $delimiter = 0;
         }
         $this->scenario->addStep($this->step);
-        $this->step->setContent(substr($line, $delimiter));
+        $this->step->setSentence(substr($line, $delimiter));
     }
 
     /**

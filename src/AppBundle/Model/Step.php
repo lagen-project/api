@@ -4,11 +4,11 @@ namespace AppBundle\Model;
 
 class Step
 {
-    const TYPE_GIVEN = 0;
-    const TYPE_WHEN = 1;
-    const TYPE_THEN = 2;
-    const TYPE_AND = 3;
-    const TYPE_BUT = 4;
+    const TYPE_GIVEN = 'Given';
+    const TYPE_WHEN = 'When';
+    const TYPE_THEN = 'Then';
+    const TYPE_AND = 'And';
+    const TYPE_BUT = 'But';
 
     /**
      * @var Scenario
@@ -18,7 +18,7 @@ class Step
     /**
      * @var string
      */
-    private $content;
+    private $sentence;
 
     /**
      * @var StepParameter
@@ -49,17 +49,17 @@ class Step
     /**
      * @return string
      */
-    public function getContent()
+    public function getSentence()
     {
-        return $this->content;
+        return $this->sentence;
     }
 
     /**
-     * @param string $content
+     * @param string $sentence
      */
-    public function setContent($content)
+    public function setSentence($sentence)
     {
-        $this->content = $content;
+        $this->sentence = $sentence;
     }
 
     /**

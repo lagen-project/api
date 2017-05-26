@@ -4,8 +4,8 @@ namespace AppBundle\Model;
 
 class Scenario
 {
-    const TYPE_BACKGROUND = 1;
-    const TYPE_SCENARIO = 2;
+    const TYPE_BACKGROUND = 'background';
+    const TYPE_SCENARIO = 'regular';
 
     /**
      * @var int

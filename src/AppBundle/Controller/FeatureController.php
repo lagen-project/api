@@ -20,15 +20,18 @@ class FeatureController extends Controller
     }
 
     /**
-     * @Route("/projects/{projectId}/features/{featureId}", methods={"GET"})
+     * @Route("/projects/{projectSlug}/features/{featureSlug}", methods={"GET"})
      *
-     * @param Request $request
+     * @param string $projectSlug
+     * @param string $featureSlug
      *
      * @return Response
      */
-    public function getAction(Request $request)
+    public function getAction($projectSlug, $featureSlug)
     {
-        return $this->handleResponse([]);
+        return $this->handleResponse(
+            $this->get('app.manager.feature')->getFeature($projectSlug, $featureSlug)
+        );
     }
 
     /**

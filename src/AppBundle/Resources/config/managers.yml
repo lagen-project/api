@@ -5,6 +5,7 @@ services:
             - "@filesystem"
             - "%projects_root_dir%"
             - "@slugify"
+            - "@app.parser.feature"
     app.manager.project:
         class: AppBundle\Manager\ProjectManager
         arguments:
