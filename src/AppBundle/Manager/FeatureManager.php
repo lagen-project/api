@@ -4,6 +4,7 @@ namespace AppBundle\Manager;
 
 use AppBundle\Model\Feature;
 use AppBundle\Parser\FeatureParser;
+use AppBundle\Transformer\FeatureToStringTransformer;
 use Cocur\Slugify\Slugify;
 use Symfony\Component\Filesystem\Filesystem;
 
@@ -30,21 +31,29 @@ class FeatureManager
     private $featureParser;
 
     /**
+     * @var FeatureToStringTransformer
+     */
+    private $featureToStringTransformer;
+
+    /**
      * @param Filesystem $filesystem
      * @param string $projectsDir
      * @param Slugify $slugify
      * @param FeatureParser $featureParser
+     * @param FeatureToStringTransformer $featureToStringTransformer
      */
     public function __construct(
         Filesystem $filesystem,
         $projectsDir,
         Slugify $slugify,
-        FeatureParser $featureParser
+        FeatureParser $featureParser,
+        FeatureToStringTransformer $featureToStringTransformer
     ) {
         $this->filesystem = $filesystem;
         $this->projectsDir = $projectsDir;
         $this->slugify = $slugify;
         $this->featureParser = $featureParser;
+        $this->featureToStringTransformer = $featureToStringTransformer;
     }
 
     /**
@@ -74,6 +83,24 @@ class FeatureManager
                 $this->slugify->slugify($featureName)
             ),
             sprintf("Feature: $featureName\n")
+        );
+    }
+
+    /**
+     * @param string $projectSlug
+     * @param string $featureSlug
+     * @param Feature $feature
+     */
+    public function editFeature($projectSlug, $featureSlug, Feature $feature)
+    {
+        file_put_contents(
+            sprintf(
+                '%s/%s/%s',
+                $this->projectsDir,
+                $projectSlug,
+                $featureSlug
+            ),
+            $this->featureToStringTransformer->transform($feature)
         );
     }
 }

@@ -6,6 +6,7 @@ services:
             - "%projects_root_dir%"
             - "@slugify"
             - "@app.parser.feature"
+            - "@app.transformer.feature_to_string"
     app.manager.project:
         class: AppBundle\Manager\ProjectManager
         arguments:

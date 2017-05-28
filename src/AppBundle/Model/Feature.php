@@ -2,15 +2,21 @@
 
 namespace AppBundle\Model;
 
+use JMS\Serializer\Annotation as Serializer;
+
 class Feature
 {
     /**
      * @var string
+     *
+     * @Serializer\Type("string")
      */
     private $name;
 
     /**
      * @var Scenario[]
+     *
+     * @Serializer\Type("array<AppBundle\Model\Scenario>")
      */
     private $scenarios;
 

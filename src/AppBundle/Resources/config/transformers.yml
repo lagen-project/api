@@ -1,0 +1,7 @@
+services:
+    app.transformer.feature_to_string:
+        class: AppBundle\Transformer\FeatureToStringTransformer
+        arguments:
+            - "@app.transformer.table_parameter_to_string_array"
+    app.transformer.table_parameter_to_string_array:
+        class: AppBundle\Transformer\TableParameterToStringArrayTransformer

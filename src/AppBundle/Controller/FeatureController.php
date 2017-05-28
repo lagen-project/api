@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Model\Feature;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -10,7 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
 class FeatureController extends Controller
 {
     /**
-     * @Route("/projects/{projectId}/features", methods={"GET"})
+     * @Route("/projects/{projectSlug}/features", methods={"GET"})
      *
      * @return Response
      */
@@ -51,14 +52,22 @@ class FeatureController extends Controller
     }
 
     /**
-     * @Route("/projects/{projectId}/features/{id}", methods={"PUT"})
+     * @Route("/projects/{projectSlug}/features/{featureSlug}", methods={"PUT"})
      *
+     * @param string $projectSlug
+     * @param string $featureSlug
      * @param Request $request
      *
      * @return Response
      */
-    public function putAction(Request $request)
+    public function putAction($projectSlug, $featureSlug, Request $request)
     {
-        return $this->handleResponse([]);
+        $feature = $this
+            ->get('jms_serializer')
+            ->deserialize($request->getContent(), Feature::class, 'json');
+
+        $this->get('app.manager.feature')->editFeature($projectSlug, $featureSlug, $feature);
+
+        return new JsonResponse(null, Response::HTTP_NO_CONTENT);
     }
 }

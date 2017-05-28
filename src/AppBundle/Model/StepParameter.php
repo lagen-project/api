@@ -2,6 +2,9 @@
 
 namespace AppBundle\Model;
 
+use JMS\Serializer\Annotation as Serializer;
+use JMS\Serializer\JsonDeserializationVisitor;
+
 class StepParameter
 {
     const TYPE_STRING = 'string';
@@ -19,6 +22,8 @@ class StepParameter
 
     /**
      * @var Step
+     *
+     * @Serializer\Type("AppBundle\Model\Step")
      */
     private $step;
 
@@ -68,5 +73,17 @@ class StepParameter
     public function setStep($step)
     {
         $this->step = $step;
+    }
+
+    /**
+     * @Serializer\HandlerCallback(direction="deserialization", format="json")
+     *
+     * @param JsonDeserializationVisitor $visitor
+     * @param array $data
+     */
+    public function deserialize(JsonDeserializationVisitor $visitor, array $data)
+    {
+        $this->type = $data['type'];
+        $this->value = $data['value'];
     }
 }

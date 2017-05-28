@@ -2,28 +2,38 @@
 
 namespace AppBundle\Model;
 
+use JMS\Serializer\Annotation as Serializer;
+
 class Scenario
 {
     const TYPE_BACKGROUND = 'background';
     const TYPE_SCENARIO = 'regular';
 
     /**
-     * @var int
+     * @var string
+     *
+     * @Serializer\Type("string")
      */
     private $type;
 
     /**
      * @var string
+     *
+     * @Serializer\Type("string")
      */
     private $name;
 
     /**
      * @var Feature
+     *
+     * @Serializer\Type("AppBundle\Model\Feature")
      */
     private $feature;
 
     /**
      * @var Step[]
+     *
+     * @Serializer\Type("array<AppBundle\Model\Step>")
      */
     private $steps;
 
@@ -33,7 +43,7 @@ class Scenario
     }
 
     /**
-     * @return int
+     * @return string
      */
     public function getType()
     {
@@ -41,7 +51,7 @@ class Scenario
     }
 
     /**
-     * @param int $type
+     * @param string $type
      */
     public function setType($type)
     {

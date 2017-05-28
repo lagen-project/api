@@ -2,3 +2,4 @@ imports:
     - { resource: events.yml }
     - { resource: managers.yml }
     - { resource: parsers.yml }
+    - { resource: transformers.yml }

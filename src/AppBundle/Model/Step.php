@@ -2,6 +2,8 @@
 
 namespace AppBundle\Model;
 
+use JMS\Serializer\Annotation as Serializer;
+
 class Step
 {
     const TYPE_GIVEN = 'Given';
@@ -12,21 +14,29 @@ class Step
 
     /**
      * @var Scenario
+     *
+     * @Serializer\Type("AppBundle\Model\Scenario")
      */
     private $scenario;
 
     /**
      * @var string
+     *
+     * @Serializer\Type("string")
      */
     private $sentence;
 
     /**
      * @var StepParameter
+     *
+     * @Serializer\Type("AppBundle\Model\StepParameter")
      */
     private $parameter;
 
     /**
-     * @var int
+     * @var string
+     *
+     * @Serializer\Type("string")
      */
     private $type;
 
@@ -79,7 +89,7 @@ class Step
     }
 
     /**
-     * @return int
+     * @return string
      */
     public function getType()
     {
@@ -87,7 +97,7 @@ class Step
     }
 
     /**
-     * @param int $type
+     * @param string $type
      */
     public function setType($type)
     {
