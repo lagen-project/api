@@ -94,6 +94,7 @@ class ProjectManager
 
         return [
             'name' => $this->retrieveProjectConfig($projectSlug)['name'],
+            'slug' => $projectSlug,
             'features' => $features
         ];
     }
@@ -105,16 +106,24 @@ class ProjectManager
     {
         $this->createRootDirIfNotExists();
         $slug = $this->slugify->slugify($projectName);
-        $projectDir = sprintf('%s/%s', $this->projectsDir, $slug);
-        $configFilename = sprintf('%s/config.json', $projectDir);
+        $this->filesystem->mkdir(sprintf('%s/%s', $this->projectsDir, $slug));
+        $this->saveProjectConfig($slug, [
+            'name' => $projectName
+        ]);
+    }
 
-        $this->filesystem->mkdir($projectDir);
-        file_put_contents($configFilename, <<<JSON
-{
-    "name": "$projectName"
-}
-JSON
-);
+    /**
+     * @param string $projectSlug
+     * @param array $changes
+     */
+    public function editProject($projectSlug, array $changes)
+    {
+        $config = array_merge(
+            $this->retrieveProjectConfig($projectSlug),
+            $changes
+        );
+
+        $this->saveProjectConfig($projectSlug, $config);
     }
 
     private function createRootDirIfNotExists()
@@ -130,13 +139,20 @@ JSON
      * @return array
      */
     private function retrieveProjectConfig($projectSlug) {
-        $iterator = (new Finder())
-            ->files()
-            ->name('config.json')
-            ->in(sprintf('%s/%s', $this->projectsDir, $projectSlug))
-            ->getIterator();
-        $iterator->rewind();
+        return json_decode(
+            file_get_contents(sprintf('%s/%s/config.json', $this->projectsDir, $projectSlug)),
+            true
+        );
+    }
 
-        return json_decode($iterator->current()->getContents(), true);
+    /**
+     * @param string $projectSlug
+     * @param array $config
+     */
+    private function saveProjectConfig($projectSlug, array $config) {
+        file_put_contents(
+            sprintf('%s/%s/config.json', $this->projectsDir, $projectSlug),
+            json_encode($config, JSON_PRETTY_PRINT)
+        );
     }
 }

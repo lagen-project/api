@@ -53,4 +53,22 @@ class ProjectController extends Controller
 
         return new JsonResponse(null, Response::HTTP_CREATED);
     }
+
+    /**
+     * @Route("/projects/{projectSlug}", methods={"PUT"})
+     *
+     * @param string $projectSlug
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function putAction($projectSlug, Request $request)
+    {
+        $this->get('app.manager.project')->editProject(
+            $projectSlug,
+            json_decode($request->getContent(), true)
+        );
+
+        return new JsonResponse(null);
+    }
 }
