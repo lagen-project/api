@@ -3,10 +3,13 @@
 namespace AppBundle\Manager;
 
 use AppBundle\Exception\ProjectNotFoundException;
+use AppBundle\Exception\ProjectNotInstalledException;
 use AppBundle\Parser\FeatureParser;
+use AppBundle\Utils\Git;
 use Cocur\Slugify\Slugify;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\Process\Exception\ProcessFailedException;
 
 class ProjectManager
 {
@@ -21,6 +24,11 @@ class ProjectManager
     private $projectsDir;
 
     /**
+     * @var string
+     */
+    private $deploysDir;
+
+    /**
      * @var Slugify
      */
     private $slugify;
@@ -31,21 +39,32 @@ class ProjectManager
     private $featureParser;
 
     /**
+     * @var Git
+     */
+    private $git;
+
+    /**
      * @param Filesystem $filesystem
-     * @param $projectsDir
+     * @param string $projectsDir
+     * @param string $deploysDir
      * @param Slugify $slugify
      * @param FeatureParser $featureParser
+     * @param Git $git
      */
     public function __construct(
         Filesystem $filesystem,
-        $projectsDir, Slugify
-        $slugify,
-        FeatureParser $featureParser
+        $projectsDir,
+        $deploysDir,
+        Slugify $slugify,
+        FeatureParser $featureParser,
+        Git $git
     ) {
         $this->filesystem = $filesystem;
         $this->projectsDir = $projectsDir;
+        $this->deploysDir = $deploysDir;
         $this->slugify = $slugify;
         $this->featureParser = $featureParser;
+        $this->git = $git;
     }
 
     /**
@@ -92,11 +111,33 @@ class ProjectManager
             ];
         }
 
+        $projectConfig = $this->retrieveProjectConfig($projectSlug);
+
         return [
-            'name' => $this->retrieveProjectConfig($projectSlug)['name'],
+            'name' => isset($projectConfig['name']) ? $projectConfig['name'] : '',
+            'gitRepository' => isset($projectConfig['gitRepository']) ? $projectConfig['gitRepository'] : '',
             'slug' => $projectSlug,
-            'features' => $features
+            'features' => $features,
+            'gitInfo' => $this->retrieveProjectGitInfo($projectSlug)
         ];
+    }
+
+    /**
+     * @param string $projectSlug
+     *
+     * @return array|null
+     */
+    public function installProject($projectSlug)
+    {
+        $projectConfig = $this->retrieveProjectConfig($projectSlug);
+
+        if (!isset($projectConfig['gitRepository'])) {
+            return null;
+        }
+
+        $this->git->cloneRepository($projectConfig['gitRepository'], $projectSlug);
+
+        return $this->retrieveProjectGitInfo($projectSlug);
     }
 
     /**
@@ -138,7 +179,8 @@ class ProjectManager
      *
      * @return array
      */
-    private function retrieveProjectConfig($projectSlug) {
+    private function retrieveProjectConfig($projectSlug)
+    {
         return json_decode(
             file_get_contents(sprintf('%s/%s/config.json', $this->projectsDir, $projectSlug)),
             true
@@ -149,10 +191,27 @@ class ProjectManager
      * @param string $projectSlug
      * @param array $config
      */
-    private function saveProjectConfig($projectSlug, array $config) {
+    private function saveProjectConfig($projectSlug, array $config)
+    {
         file_put_contents(
             sprintf('%s/%s/config.json', $this->projectsDir, $projectSlug),
             json_encode($config, JSON_PRETTY_PRINT)
         );
+    }
+
+    /**
+     * @param string $projectSlug
+     *
+     * @return array|null
+     */
+    private function retrieveProjectGitInfo($projectSlug)
+    {
+        try {
+            return $this->git->getLastCommitInfo($projectSlug);
+        } catch (ProcessFailedException $e) {
+            return null;
+        } catch (ProjectNotInstalledException $e) {
+            return null;
+        }
     }
 }

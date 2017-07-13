@@ -12,5 +12,7 @@ services:
         arguments:
             - "@filesystem"
             - "%projects_root_dir%"
+            - "%deploys_root_dir%"
             - "@slugify"
             - "@app.parser.feature"
+            - "@app.utils.git"

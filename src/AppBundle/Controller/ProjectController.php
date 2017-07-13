@@ -71,4 +71,16 @@ class ProjectController extends Controller
 
         return new JsonResponse(null);
     }
+
+    /**
+     * @Route("/projects/{projectSlug}/install", methods={"GET"})
+     *
+     * @param string $projectSlug
+     *
+     * @return JsonResponse
+     */
+    public function installAction($projectSlug)
+    {
+        return new JsonResponse($this->get('app.manager.project')->installProject($projectSlug));
+    }
 }
