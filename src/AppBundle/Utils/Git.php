@@ -62,7 +62,10 @@ class Git
         return [
             'commit' => substr($output[0], 7, 5),
             'author' => substr($output[1 + (int) $isMerge], 8),
-            'date' => substr($output[2 + (int) $isMerge], 8)
+            'date' => \DateTime::createFromFormat(
+                'D M d H:i:s Y O',
+                substr($output[2 + (int) $isMerge], 8)
+            )->format('F jS Y - H:i:s')
         ];
     }
 
