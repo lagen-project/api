@@ -56,12 +56,13 @@ class Git
             throw new ProjectNotInstalledException();
         }
 
-        $output = explode("\n", $this->processCommand(sprintf('cd %s && git log | head -n 3', $dir)));
+        $output = explode("\n", $this->processCommand(sprintf('cd %s && git log | head -n 4', $dir)));
+        $isMerge = substr($output[1], 0, 1) === 'M';
 
         return [
             'commit' => substr($output[0], 7, 5),
-            'author' => substr($output[1], 8),
-            'date' => substr($output[2], 8)
+            'author' => substr($output[1 + (int) $isMerge], 8),
+            'date' => substr($output[2 + (int) $isMerge], 8)
         ];
     }
 
