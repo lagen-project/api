@@ -70,4 +70,54 @@ class FeatureController extends Controller
 
         return new JsonResponse(null, Response::HTTP_NO_CONTENT);
     }
+
+    /**
+     * @Route("/projects/{projectSlug}/features/{featureSlug}/export", methods={"GET"})
+     *
+     * @param string $projectSlug
+     * @param string $featureSlug
+     *
+     * @return Response
+     */
+    public function exportAction($projectSlug, $featureSlug)
+    {
+        return new Response(
+            $this->get('app.manager.feature')->exportFeature($projectSlug, $featureSlug)
+        );
+    }
+
+    /**
+     * @Route("/projects/{projectSlug}/features/{featureSlug}/metadata", methods={"GET"})
+     *
+     * @param string $projectSlug
+     * @param string $featureSlug
+     *
+     * @return Response
+     */
+    public function getMetadataAction($projectSlug, $featureSlug)
+    {
+        $metadata = $this
+            ->get('app.manager.feature')
+            ->getFeatureMetadata($projectSlug, $featureSlug);
+
+        return $this->handleResponse($metadata);
+    }
+
+    /**
+     * @Route("/projects/{projectSlug}/features/{featureSlug}/metadata", methods={"POST"})
+     *
+     * @param string $projectSlug
+     * @param string $featureSlug
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function postMetadataAction($projectSlug, $featureSlug, Request $request)
+    {
+        $this
+            ->get('app.manager.feature')
+            ->setFeatureMetadata($projectSlug, $featureSlug, $request->get('metadata'));
+
+        return new JsonResponse();
+    }
 }

@@ -103,4 +103,61 @@ class FeatureManager
             $this->featureToStringTransformer->transform($feature)
         );
     }
+
+    /**
+     * @param string $projectSlug
+     * @param string $featureSlug
+     *
+     * @return Feature
+     */
+    public function exportFeature($projectSlug, $featureSlug)
+    {
+        return file_get_contents(
+            sprintf('%s/%s/%s', $this->projectsDir, $projectSlug, $featureSlug)
+        );
+    }
+
+    /**
+     * @param string $projectSlug
+     * @param string $featureSlug
+     * @param array $metadata
+     */
+    public function setFeatureMetadata($projectSlug, $featureSlug, array $metadata)
+    {
+        $this->checkMetadataFile($projectSlug);
+        $file = sprintf('%s/%s/features.metadata.json', $this->projectsDir, $projectSlug);
+
+        $content = file_get_contents($file);
+        $projectMetadata = json_decode($content, true);
+        $projectMetadata[$featureSlug] = $metadata;
+
+        file_put_contents($file, json_encode($projectMetadata));
+    }
+
+    /**
+     * @param string $projectSlug
+     * @param string $featureSlug
+     *
+     * @return array|null
+     */
+    public function getFeatureMetadata($projectSlug, $featureSlug)
+    {
+        $this->checkMetadataFile($projectSlug);
+
+        $content = file_get_contents(sprintf('%s/%s/features.metadata.json', $this->projectsDir, $projectSlug));
+        $metadata = json_decode($content, true);
+
+        return isset($metadata[$featureSlug]) ? $metadata[$featureSlug] : null;
+    }
+
+    /**
+     * @param string $projectSlug
+     */
+    public function checkMetadataFile($projectSlug)
+    {
+        $file = sprintf('%s/%s/features.metadata.json', $this->projectsDir, $projectSlug);
+        if (!$this->filesystem->exists($file)) {
+            file_put_contents($file, '{}');
+        }
+    }
 }
