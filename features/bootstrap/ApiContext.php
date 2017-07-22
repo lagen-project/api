@@ -1,10 +1,16 @@
 <?php
 
 use Behat\Gherkin\Node\PyStringNode;
+use Symfony\Component\HttpFoundation\Response;
 
 class ApiContext extends ContainerAwareContext
 {
     const BEHAT_ROOT_DIR = __DIR__ . '/../../tests';
+
+    /**
+     * @var Response
+     */
+    private $response;
 
     /**
      * @Given I have no projects installed
@@ -15,7 +21,8 @@ class ApiContext extends ContainerAwareContext
     }
 
     /**
-     * @When I send a ":method" request to ":uri" with the following body:
+     * @When I send a :method request to :uri with the following body:
+     * @When I send a :method request to :uri
      *
      * @param string $method
      * @param string $uri
@@ -33,6 +40,7 @@ class ApiContext extends ContainerAwareContext
 
         $client->restart();
         $client->request($method, $uri, [], [], $server, $body);
+        $this->response = $client->getResponse();
     }
 
     /**
@@ -72,6 +80,23 @@ class ApiContext extends ContainerAwareContext
                 $expected,
                 $actual
             ));
+        }
+    }
+
+    /**
+     * @Then I should have the following response:
+     *
+     * @param PyStringNode|null $response
+     *
+     * @throws Exception
+     */
+    public function iShouldHaveTheResponse(PyStringNode $response = null)
+    {
+        $expected = $response ? json_encode(json_decode($response->getRaw())) : null;
+        $actual = $this->response ? json_encode(json_decode($this->response->getContent())) : null;
+
+        if ($actual !== $expected) {
+            throw new \Exception(sprintf('Expected response %s, got %s', $expected, $actual));
         }
     }
 }

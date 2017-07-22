@@ -15,3 +15,15 @@ Feature: Project API
         "name": "TEST LAGEN API"
     }
     """
+
+  Scenario: Retrieve the single project
+    When  I send a "GET" request to "projects/test-lagen-api"
+    Then I should have the following response:
+    """
+    {
+        "name": "TEST LAGEN API",
+        "gitRepository": "",
+        "slug": "test-lagen-api",
+        "features": []
+    }
+    """
