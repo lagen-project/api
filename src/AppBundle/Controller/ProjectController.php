@@ -7,6 +7,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ProjectController extends Controller
@@ -77,10 +78,22 @@ class ProjectController extends Controller
      *
      * @param string $projectSlug
      *
-     * @return JsonResponse
+     * @return StreamedResponse
      */
     public function installAction($projectSlug)
     {
-        return new JsonResponse($this->get('app.manager.project')->installProject($projectSlug));
+        return $this->get('app.manager.project')->installProject($projectSlug);
+    }
+
+    /**
+     * @Route("/projects/{projectSlug}/git", methods={"GET"})
+     *
+     * @param string $projectSlug
+     *
+     * @return JsonResponse
+     */
+    public function gitAction($projectSlug)
+    {
+        return new JsonResponse($this->get('app.manager.project')->retrieveProjectGitInfo($projectSlug));
     }
 }

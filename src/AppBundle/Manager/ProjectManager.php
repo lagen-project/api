@@ -11,8 +11,10 @@ use AppBundle\Utils\Git;
 use Cocur\Slugify\Slugify;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
+use Symfony\Component\Yaml\Yaml;
 
 class ProjectManager
 {
@@ -128,7 +130,7 @@ class ProjectManager
     /**
      * @param string $projectSlug
      *
-     * @return array|null
+     * @return StreamedResponse
      *
      * @throws ProcessFailedException
      * @throws ProjectNotInstallableException
@@ -147,14 +149,26 @@ class ProjectManager
         if (!isset($lagenConfig['install'])) {
             throw new ProjectNotInstallableException();
         }
-        $process = new Process($lagenConfig['install']);
-        $process->run();
 
-        if (!$process->isSuccessful()) {
-            throw new ProcessFailedException($process);
-        }
+        $response = new StreamedResponse();
+        $response->headers->add(['Content-type' => 'application/json']);
+        $process = new Process(sprintf(
+            'cd %s/%s && %s',
+            $this->deploysDir,
+            $projectSlug,
+            $lagenConfig['install']
+        ));
+        $process->setTimeout(0);
+        $process->start();
+        $response->setCallback(function () use ($process) {
+            $process->wait(function ($type, $buffer) {
+                echo $buffer;
+                flush();
+                ob_flush();
+            });
+        });
 
-        return $this->retrieveProjectGitInfo($projectSlug);
+        return $response;
     }
 
     /**
@@ -218,10 +232,7 @@ class ProjectManager
             throw new ProjectConfigurationNotFoundException();
         }
 
-        return json_decode(
-            file_get_contents($file),
-            true
-        );
+        return Yaml::parse(file_get_contents($file));
     }
 
     /**
@@ -241,7 +252,7 @@ class ProjectManager
      *
      * @return array|null
      */
-    private function retrieveProjectGitInfo($projectSlug)
+    public function retrieveProjectGitInfo($projectSlug)
     {
         try {
             return $this->git->getLastCommitInfo($projectSlug);
