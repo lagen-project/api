@@ -2,7 +2,9 @@
 
 namespace AppBundle\Manager;
 
+use AppBundle\Exception\ProjectConfigurationNotFoundException;
 use AppBundle\Exception\ProjectNotFoundException;
+use AppBundle\Exception\ProjectNotInstallableException;
 use AppBundle\Exception\ProjectNotInstalledException;
 use AppBundle\Parser\FeatureParser;
 use AppBundle\Utils\Git;
@@ -10,6 +12,7 @@ use Cocur\Slugify\Slugify;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Process\Exception\ProcessFailedException;
+use Symfony\Component\Process\Process;
 
 class ProjectManager
 {
@@ -126,6 +129,9 @@ class ProjectManager
      * @param string $projectSlug
      *
      * @return array|null
+     *
+     * @throws ProcessFailedException
+     * @throws ProjectNotInstallableException
      */
     public function installProject($projectSlug)
     {
@@ -136,6 +142,17 @@ class ProjectManager
         }
 
         $this->git->cloneRepository($projectConfig['gitRepository'], $projectSlug);
+
+        $lagenConfig = $this->retrieveProjectLagenConfig($projectSlug);
+        if (!isset($lagenConfig['install'])) {
+            throw new ProjectNotInstallableException();
+        }
+        $process = new Process($lagenConfig['install']);
+        $process->run();
+
+        if (!$process->isSuccessful()) {
+            throw new ProcessFailedException($process);
+        }
 
         return $this->retrieveProjectGitInfo($projectSlug);
     }
@@ -183,6 +200,26 @@ class ProjectManager
     {
         return json_decode(
             file_get_contents(sprintf('%s/%s/config.json', $this->projectsDir, $projectSlug)),
+            true
+        );
+    }
+    /**
+     * @param string $projectSlug
+     *
+     * @return array
+     *
+     * @throws ProjectConfigurationNotFoundException
+     */
+    private function retrieveProjectLagenConfig($projectSlug)
+    {
+        $file = sprintf('%s/%s/.lagen.yml', $this->deploysDir, $projectSlug);
+
+        if (!$this->filesystem->exists($file)) {
+            throw new ProjectConfigurationNotFoundException();
+        }
+
+        return json_decode(
+            file_get_contents($file),
             true
         );
     }

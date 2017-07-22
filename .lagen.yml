@@ -1,0 +1,9 @@
+server:
+    host: http://api.lagen.local
+    port: 80
+    username: ~
+    password: ~
+project_slug: lagen-api
+root_dir: features
+install: "composer install"
+test: "./vendor/bin/behat"
