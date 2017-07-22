@@ -32,6 +32,8 @@
         "symfony/symfony": "3.2.*"
     },
     "require-dev": {
+        "behat/behat": "^3.3",
+        "behat/symfony2-extension": "^2.1",
         "sensio/generator-bundle": "^3.0",
         "symfony/phpunit-bridge": "^3.0"
     },
