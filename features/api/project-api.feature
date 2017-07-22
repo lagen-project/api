@@ -27,3 +27,31 @@ Feature: Project API
         "features": []
     }
     """
+
+  Scenario: Retrieve the collection of projects
+    When I send a "GET" request to "projects"
+    Then I should have the following response:
+    """
+    [
+        {
+            "slug": "test-lagen-api",
+            "name": "TEST LAGEN API"
+        }
+    ]
+    """
+
+  Scenario: Update the project
+    When I send a "PUT" request to "projects/test-lagen-api" with the following body:
+    """
+    {
+        "name": "TEST LAGEN API - EDITED",
+        "gitRepository": "git@github.com/test/lagen-api.git"
+    }
+    """
+    Then the configuration file of the "test-lagen-api" project should have the following values:
+    """
+    {
+        "name": "TEST LAGEN API - EDITED",
+        "gitRepository": "git@github.com/test/lagen-api.git"
+    }
+    """
