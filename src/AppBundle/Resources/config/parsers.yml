@@ -1,3 +1,5 @@
 services:
     app.parser.feature:
         class: AppBundle\Parser\FeatureParser
+    app.parser.test_result:
+        class: AppBundle\Parser\TestResultParser

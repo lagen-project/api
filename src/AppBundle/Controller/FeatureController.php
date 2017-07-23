@@ -96,7 +96,7 @@ class FeatureController extends Controller
      */
     public function runAction($projectSlug, $featureSlug)
     {
-        return new Response($this->get('app.manager.feature')->runFeature($projectSlug, $featureSlug));
+        return $this->handleResponse($this->get('app.manager.feature')->runFeature($projectSlug, $featureSlug));
     }
 
     /**

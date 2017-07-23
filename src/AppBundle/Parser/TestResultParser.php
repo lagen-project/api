@@ -16,7 +16,6 @@ class TestResultParser
     public function parse($resultLine, Feature $feature)
     {
         $index = 0;
-        $resultLineLength = strlen($resultLine);
         $hasBg = $feature->getScenarios() && $feature->getScenarios()[0]->getType() === Scenario::TYPE_BACKGROUND;
         $bgResult = [];
         $regularResults = [];
@@ -34,14 +33,14 @@ class TestResultParser
 
             $scenarioResult = [];
             for ($i = 0 ; $i < count($scenario->getSteps()) ; $i++) {
-                $scenarioResult[] = $this->convertResult($resultLineLength[$index]);
+                $scenarioResult[] = $this->convertResult($resultLine[$index]);
                 $index++;
             }
 
             $regularResults[] = $scenarioResult;
         }
 
-        return array_merge([$bgResult], $regularResults);
+        return $bgResult ? array_merge([$bgResult], $regularResults) : $regularResults;
     }
 
     /**

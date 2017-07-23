@@ -5,6 +5,7 @@ namespace AppBundle\Manager;
 use AppBundle\Exception\ProjectConfigurationNotFoundException;
 use AppBundle\Model\Feature;
 use AppBundle\Parser\FeatureParser;
+use AppBundle\Parser\TestResultParser;
 use AppBundle\Transformer\FeatureToStringTransformer;
 use Cocur\Slugify\Slugify;
 use Symfony\Component\Filesystem\Filesystem;
@@ -48,6 +49,11 @@ class FeatureManager
     private $projectManager;
 
     /**
+     * @var TestResultParser
+     */
+    private $testResultParser;
+
+    /**
      * @param Filesystem $filesystem
      * @param string $deploysDir
      * @param string $projectsDir
@@ -55,6 +61,7 @@ class FeatureManager
      * @param FeatureParser $featureParser
      * @param FeatureToStringTransformer $featureToStringTransformer
      * @param ProjectManager $projectManager
+     * @param TestResultParser $testResultParser
      */
     public function __construct(
         Filesystem $filesystem,
@@ -63,7 +70,8 @@ class FeatureManager
         Slugify $slugify,
         FeatureParser $featureParser,
         FeatureToStringTransformer $featureToStringTransformer,
-        ProjectManager $projectManager
+        ProjectManager $projectManager,
+        TestResultParser $testResultParser
     ) {
         $this->filesystem = $filesystem;
         $this->deploysDir = $deploysDir;
@@ -72,6 +80,7 @@ class FeatureManager
         $this->featureParser = $featureParser;
         $this->featureToStringTransformer = $featureToStringTransformer;
         $this->projectManager = $projectManager;
+        $this->testResultParser = $testResultParser;
     }
 
     /**
@@ -199,10 +208,11 @@ class FeatureManager
      * @param string $projectSlug
      * @param string $featureSlug
      *
-     * @return string
+     * @return array
      */
     public function runFeature($projectSlug, $featureSlug)
     {
+        $feature = $this->getFeature($projectSlug, $featureSlug);
         $testCmd = $this->projectManager->retrieveProjectLagenConfig($projectSlug)['test'];
         $featureMetadata = $this->getFeatureMetadata($projectSlug, $featureSlug);
 
@@ -231,6 +241,6 @@ class FeatureManager
         $process = new Process($cmd);
         $process->run();
 
-        return $process->getOutput();
+        return $this->testResultParser->parse($process->getOutput(), $feature);
     }
 }
