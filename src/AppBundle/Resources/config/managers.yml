@@ -3,10 +3,12 @@ services:
         class: AppBundle\Manager\FeatureManager
         arguments:
             - "@filesystem"
+            - "%deploys_root_dir%"
             - "%projects_root_dir%"
             - "@slugify"
             - "@app.parser.feature"
             - "@app.transformer.feature_to_string"
+            - "@app.manager.project"
     app.manager.project:
         class: AppBundle\Manager\ProjectManager
         arguments:

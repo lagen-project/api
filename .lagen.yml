@@ -6,4 +6,4 @@ server:
 project_slug: lagen-api
 root_dir: features
 install: "composer install"
-test: "./vendor/bin/behat"
+test: "./vendor/bin/behat --format=progress"

@@ -2,11 +2,13 @@
 
 namespace AppBundle\Manager;
 
+use AppBundle\Exception\ProjectConfigurationNotFoundException;
 use AppBundle\Model\Feature;
 use AppBundle\Parser\FeatureParser;
 use AppBundle\Transformer\FeatureToStringTransformer;
 use Cocur\Slugify\Slugify;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Process\Process;
 
 class FeatureManager
 {
@@ -14,6 +16,11 @@ class FeatureManager
      * @var Filesystem
      */
     private $filesystem;
+
+    /**
+     * @var string
+     */
+    private $deploysDir;
 
     /**
      * @var string
@@ -36,24 +43,35 @@ class FeatureManager
     private $featureToStringTransformer;
 
     /**
+     * @var ProjectManager
+     */
+    private $projectManager;
+
+    /**
      * @param Filesystem $filesystem
+     * @param string $deploysDir
      * @param string $projectsDir
      * @param Slugify $slugify
      * @param FeatureParser $featureParser
      * @param FeatureToStringTransformer $featureToStringTransformer
+     * @param ProjectManager $projectManager
      */
     public function __construct(
         Filesystem $filesystem,
+        $deploysDir,
         $projectsDir,
         Slugify $slugify,
         FeatureParser $featureParser,
-        FeatureToStringTransformer $featureToStringTransformer
+        FeatureToStringTransformer $featureToStringTransformer,
+        ProjectManager $projectManager
     ) {
         $this->filesystem = $filesystem;
+        $this->deploysDir = $deploysDir;
         $this->projectsDir = $projectsDir;
         $this->slugify = $slugify;
         $this->featureParser = $featureParser;
         $this->featureToStringTransformer = $featureToStringTransformer;
+        $this->projectManager = $projectManager;
     }
 
     /**
@@ -64,9 +82,25 @@ class FeatureManager
      */
     public function getFeature($projectSlug, $featureSlug)
     {
-        return $this->featureParser->parse(
+        $feature = $this->featureParser->parse(
             sprintf('%s/%s/%s', $this->projectsDir, $projectSlug, $featureSlug)
         );
+
+        $deployDirExists = $this->filesystem->exists(sprintf('%s/%s', $this->deploysDir, $projectSlug));
+        $featureMetadata = $this->getFeatureMetadata($projectSlug, $featureSlug);
+        try {
+            $lagenConfig = $this->projectManager->retrieveProjectLagenConfig($projectSlug);
+        } catch (ProjectConfigurationNotFoundException $e) {
+            $lagenConfig = null;
+        }
+        $feature->setRunnable(
+            $deployDirExists &&
+            !empty($featureMetadata) &&
+            !empty($lagenConfig) &&
+            isset($lagenConfig['test'])
+        );
+
+        return $feature;
     }
 
     /**
@@ -159,5 +193,44 @@ class FeatureManager
         if (!$this->filesystem->exists($file)) {
             file_put_contents($file, '{}');
         }
+    }
+
+    /**
+     * @param string $projectSlug
+     * @param string $featureSlug
+     *
+     * @return string
+     */
+    public function runFeature($projectSlug, $featureSlug)
+    {
+        $testCmd = $this->projectManager->retrieveProjectLagenConfig($projectSlug)['test'];
+        $featureMetadata = $this->getFeatureMetadata($projectSlug, $featureSlug);
+
+        $cmd = sprintf(
+            'cd %s/%s && mv %s/%s %s/%s.backup && cp %s/%s/%s %s/%s && %s %s/%s; mv %s/%s.backup %s/%s',
+            $this->deploysDir,
+            $projectSlug,
+            $featureMetadata['dir'],
+            $featureMetadata['filename'],
+            $featureMetadata['dir'],
+            $featureMetadata['filename'],
+            $this->projectsDir,
+            $projectSlug,
+            $featureSlug,
+            $featureMetadata['dir'],
+            $featureMetadata['filename'],
+            $testCmd,
+            $featureMetadata['dir'],
+            $featureMetadata['filename'],
+            $featureMetadata['dir'],
+            $featureMetadata['filename'],
+            $featureMetadata['dir'],
+            $featureMetadata['filename']
+        );
+
+        $process = new Process($cmd);
+        $process->run();
+
+        return $process->getOutput();
     }
 }

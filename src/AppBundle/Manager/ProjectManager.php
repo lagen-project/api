@@ -217,6 +217,7 @@ class ProjectManager
             true
         );
     }
+
     /**
      * @param string $projectSlug
      *
@@ -224,7 +225,7 @@ class ProjectManager
      *
      * @throws ProjectConfigurationNotFoundException
      */
-    private function retrieveProjectLagenConfig($projectSlug)
+    public function retrieveProjectLagenConfig($projectSlug)
     {
         $file = sprintf('%s/%s/.lagen.yml', $this->deploysDir, $projectSlug);
 

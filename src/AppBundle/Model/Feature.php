@@ -20,6 +20,13 @@ class Feature
      */
     private $scenarios;
 
+    /**
+     * @var bool
+     *
+     * @Serializer\Type("boolean")
+     */
+    private $runnable;
+
     public function __construct()
     {
         $this->scenarios = [];
@@ -80,5 +87,21 @@ class Feature
                 unset($this->scenarios[$id]);
             }
         }
+    }
+
+    /**
+     * @return bool
+     */
+    public function isRunnable()
+    {
+        return $this->runnable;
+    }
+
+    /**
+     * @param bool $runnable
+     */
+    public function setRunnable($runnable)
+    {
+        $this->runnable = $runnable;
     }
 }

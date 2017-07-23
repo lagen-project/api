@@ -87,6 +87,19 @@ class FeatureController extends Controller
     }
 
     /**
+     * @Route("/projects/{projectSlug}/features/{featureSlug}/run", methods={"GET"})
+     *
+     * @param string $projectSlug
+     * @param string $featureSlug
+     *
+     * @return Response
+     */
+    public function runAction($projectSlug, $featureSlug)
+    {
+        return new Response($this->get('app.manager.feature')->runFeature($projectSlug, $featureSlug));
+    }
+
+    /**
      * @Route("/projects/{projectSlug}/features/{featureSlug}/metadata", methods={"GET"})
      *
      * @param string $projectSlug
