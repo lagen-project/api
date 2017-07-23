@@ -26,15 +26,15 @@ class TestResultParser
                 if ($scenario->getType() === Scenario::TYPE_BACKGROUND) {
                     continue;
                 }
-                foreach ($feature->getScenarios()[0]->getSteps() as $step) {
-                    $bgResult[] = $this->convertResult($resultLine[$index]);
+                for ($i = 0 ; $i < count($feature->getScenarios()[0]->getSteps()) ; $i++) {
+                    $bgResult[$i] = $this->convertResult($resultLine[$index]);
                     $index++;
                 }
             }
 
             $scenarioResult = [];
             for ($i = 0 ; $i < count($scenario->getSteps()) ; $i++) {
-                $scenarioResult = $this->convertResult($resultLineLength[$index]);
+                $scenarioResult[] = $this->convertResult($resultLineLength[$index]);
                 $index++;
             }
 
