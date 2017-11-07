@@ -23,6 +23,7 @@ class FeatureParser
     const TYPE_STEP_PARAMETER_STRING_DELIMITER = 'string';
     const TYPE_BLANK = '';
     const TYPE_COMMENT = '#';
+    const TYPE_DESCRIPTION = 'description';
 
     /**
      * @var array
@@ -69,10 +70,13 @@ class FeatureParser
         $this->index = 0;
         while ($this->index < count($this->contents)) {
             $line = trim($this->contents[$this->index]);
-            $type = $this->getLineType($line);
+            $type = $this->getLineType($this->index, $line);
             switch($type) {
                 case self::TYPE_FEATURE:
                     $this->createFeature($line);
+                    break;
+                case self::TYPE_DESCRIPTION:
+                    $this->consumeDescription();
                     break;
                 case self::TYPE_SCENARIO:
                     $this->createScenario($line, Scenario::TYPE_SCENARIO);
@@ -177,6 +181,22 @@ class FeatureParser
     }
 
     /**
+     * Consumes the description
+     */
+    private function consumeDescription()
+    {
+        $description = '';
+        $line = '';
+        while (substr($line, 0, 8) !== 'Scenario' && substr($line, 0, 9) !== 'Background') {
+            $description .= trim($this->contents[$this->index], " \t\n\r\0\x0B") . "\n";
+            $this->index++;
+            $line = trim($this->contents[$this->index], " \t\n\r\0\x0B");
+        }
+        $this->index -= 2;
+        $this->feature->setDescription($description);
+    }
+
+    /**
      * Consumes a table parameter
      */
     private function consumeTableParameter()
@@ -214,7 +234,7 @@ class FeatureParser
      *
      * @throws UnrecognizedLineTypeException
      */
-    private function getLineType($line)
+    private function getLineType($index, $line)
     {
         if ($line === '') {
             return self::TYPE_BLANK;
@@ -251,6 +271,9 @@ class FeatureParser
         }
         if (substr($line, 0, 3) === '"""') {
             return self::TYPE_STEP_PARAMETER_STRING_DELIMITER;
+        }
+        if ($index === 1) {
+            return self::TYPE_DESCRIPTION;
         }
 
         throw new UnrecognizedLineTypeException;

@@ -55,3 +55,10 @@ Feature: Project API
         "gitRepository": "git@github.com/test/lagen-api.git"
     }
     """
+
+  Scenario: Plop
+    Given I have an undefined step
+      | id | name    |
+      | 1  | charlie |
+      | 2  | pierre  |
+    Then I'm happy

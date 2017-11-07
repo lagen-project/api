@@ -30,6 +30,7 @@ class FeatureToStringTransformer
     public function transform(Feature $feature)
     {
         $asArray = ['Feature: ' . $feature->getName()];
+        $asArray[] = array_merge($asArray, $this->transformDescription($feature->getDescription()));
         foreach ($feature->getScenarios() as $scenario) {
             $asArray[] = '';
             $asArray[] = sprintf(
@@ -76,5 +77,15 @@ class FeatureToStringTransformer
         ];
 
         return $types[$type];
+    }
+
+    /**
+     * @param string $description
+     *
+     * @return array
+     */
+    private function transformDescription($description)
+    {
+        return array_map(function($line) { return '  ' . $line; }, explode(PHP_EOL, $description));
     }
 }

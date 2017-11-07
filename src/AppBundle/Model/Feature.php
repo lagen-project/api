@@ -14,6 +14,13 @@ class Feature
     private $name;
 
     /**
+     * @var string
+     *
+     * @Serializer\Type("string")
+     */
+    private $description;
+
+    /**
      * @var Scenario[]
      *
      * @Serializer\Type("array<AppBundle\Model\Scenario>")
@@ -46,6 +53,22 @@ class Feature
     public function setName($name)
     {
         $this->name = $name;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    /**
+     * @param string $description
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
     }
 
     /**
