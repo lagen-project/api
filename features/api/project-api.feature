@@ -20,7 +20,7 @@ Feature: Project API
     """
 
   Scenario: Retrieve the single project
-    When  I send a "GET" request to "projects/test-lagen-api"
+    When I send a "GET" request to "projects/test-lagen-api"
     Then I should have the following response:
     """
     {
