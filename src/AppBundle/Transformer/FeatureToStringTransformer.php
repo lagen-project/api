@@ -30,7 +30,7 @@ class FeatureToStringTransformer
     public function transform(Feature $feature)
     {
         $asArray = ['Feature: ' . $feature->getName()];
-        $asArray[] = array_merge($asArray, $this->transformDescription($feature->getDescription()));
+        $asArray = array_merge($asArray, $this->transformDescription($feature->getDescription()));
         foreach ($feature->getScenarios() as $scenario) {
             $asArray[] = '';
             $asArray[] = sprintf(

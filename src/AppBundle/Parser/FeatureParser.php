@@ -193,7 +193,7 @@ class FeatureParser
             $line = trim($this->contents[$this->index], " \t\n\r\0\x0B");
         }
         $this->index -= 2;
-        $this->feature->setDescription($description);
+        $this->feature->setDescription(trim($description));
     }
 
     /**
