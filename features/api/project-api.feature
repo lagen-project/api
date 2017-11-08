@@ -1,4 +1,7 @@
 Feature: Project API
+  To be able to manage projects,
+  As an API consumer, like an user interface,
+  I should have a functioning projects API
 
   Scenario: Create a new project
     Given I have no projects installed
@@ -17,7 +20,7 @@ Feature: Project API
     """
 
   Scenario: Retrieve the single project
-    When I send a "GET" request to "projects/test-lagen-api"
+    When  I send a "GET" request to "projects/test-lagen-api"
     Then I should have the following response:
     """
     {
@@ -55,10 +58,3 @@ Feature: Project API
         "gitRepository": "git@github.com/test/lagen-api.git"
     }
     """
-
-  Scenario: Plop
-    Given I have an undefined step
-      | id | name    |
-      | 1  | charlie |
-      | 2  | pierre  |
-    Then I'm happy
