@@ -121,6 +121,7 @@ class ProjectManager
         return [
             'name' => isset($projectConfig['name']) ? $projectConfig['name'] : '',
             'gitRepository' => isset($projectConfig['gitRepository']) ? $projectConfig['gitRepository'] : '',
+            'gitBranch' => isset($projectConfig['gitBranch']) ? $projectConfig['gitBranch'] : '',
             'slug' => $projectSlug,
             'features' => $features,
             'gitInfo' => $this->retrieveProjectGitInfo($projectSlug)
