@@ -15,11 +15,20 @@ class FeatureToStringTransformer
     private $tableParameterTransformer;
 
     /**
-     * @param TableParameterToStringArrayTransformer $tableParameterTransformer
+     * @var ExamplesToStringArrayTransformer
      */
-    public function __construct(TableParameterToStringArrayTransformer $tableParameterTransformer)
-    {
+    private $examplesTransformer;
+
+    /**
+     * @param TableParameterToStringArrayTransformer $tableParameterTransformer
+     * @param ExamplesToStringArrayTransformer $examplesTransformer
+     */
+    public function __construct(
+        TableParameterToStringArrayTransformer $tableParameterTransformer,
+        ExamplesToStringArrayTransformer $examplesTransformer
+    ) {
         $this->tableParameterTransformer = $tableParameterTransformer;
+        $this->examplesTransformer = $examplesTransformer;
     }
 
     /**
@@ -35,7 +44,8 @@ class FeatureToStringTransformer
             $asArray[] = '';
             $asArray[] = sprintf(
                 '  %s: %s',
-                $scenario->getType() === Scenario::TYPE_BACKGROUND ? 'Background' : 'Scenario',
+                $scenario->getType() === Scenario::TYPE_BACKGROUND ? 'Background' :
+                    $scenario->isOutline() ? 'Scenario Outline' : 'Scenario',
                 $scenario->getName()
             );
             foreach ($scenario->getSteps() as $step) {
@@ -54,6 +64,14 @@ class FeatureToStringTransformer
                         );
                     }
                 }
+            }
+            if ($scenario->isOutline()) {
+                $asArray[] = '';
+                $asArray[] = '    Examples:';
+                $asArray = array_merge(
+                    $asArray,
+                    $this->examplesTransformer->transform($scenario->getExamples())
+                );
             }
         }
         $asArray[] = '';

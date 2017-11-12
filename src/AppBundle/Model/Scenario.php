@@ -37,9 +37,17 @@ class Scenario
      */
     private $steps;
 
+    /**
+     * @var array
+     *
+     * @Serializer\Type("array")
+     */
+    private $examples;
+
     public function __construct()
     {
         $this->steps = [];
+        $this->examples = [];
     }
 
     /**
@@ -129,5 +137,29 @@ class Scenario
                 unset($this->steps[$id]);
             }
         }
+    }
+
+    /**
+     * @return array
+     */
+    public function getExamples()
+    {
+        return $this->examples;
+    }
+
+    /**
+     * @param array $examples
+     */
+    public function setExamples($examples)
+    {
+        $this->examples = $examples;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isOutline()
+    {
+        return count($this->examples) > 0;
     }
 }

@@ -32,7 +32,7 @@ class TestResultParser
             }
 
             $scenarioResult = [];
-            for ($i = 0 ; $i < count($scenario->getSteps()) ; $i++) {
+            for ($i = 0 ; $i < $this->countResultAnalysis($scenario) ; $i++) {
                 $scenarioResult[] = $this->convertResult($resultLine[$index]);
                 $index++;
             }
@@ -54,5 +54,17 @@ class TestResultParser
             'success' => $char === '.',
             'reason' => $char !== '.' ? $char : null
         ];
+    }
+
+    /**
+     * @param Scenario $scenario
+     *
+     * @return int
+     */
+    private function countResultAnalysis(Scenario $scenario)
+    {
+        return $scenario->isOutline() ?
+            array_reduce($scenario->getExamples(), function($carry, $item) { return $carry + count($item); }) :
+            count($scenario->getSteps());
     }
 }

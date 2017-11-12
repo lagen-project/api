@@ -24,6 +24,7 @@ class FeatureParser
     const TYPE_BLANK = '';
     const TYPE_COMMENT = '#';
     const TYPE_DESCRIPTION = 'description';
+    const TYPE_EXAMPLES = 'examples';
 
     /**
      * @var array
@@ -50,12 +51,18 @@ class FeatureParser
      */
     private $step;
 
+    /**
+     * @var bool
+     */
+    private $consumeExamples;
+
     private function init()
     {
         $this->index = 0;
         $this->feature = null;
         $this->scenario = null;
         $this->step = null;
+        $this->consumeExamples = false;
     }
 
     /**
@@ -93,8 +100,15 @@ class FeatureParser
                 case self::TYPE_STEP_PARAMETER_STRING_DELIMITER:
                     $this->consumeStringParameter();
                     break;
+                case self::TYPE_EXAMPLES:
+                    $this->consumeExamples = true;
+                    break;
                 case self::TYPE_STEP_PARAMETER_TABLE_DELIMITER:
-                    $this->consumeTableParameter();
+                    if (!$this->consumeExamples) {
+                        $this->consumeTableParameter();
+                    } else {
+                        $this->consumeExamples();
+                    }
                     break;
             }
             $this->index++;
@@ -124,7 +138,7 @@ class FeatureParser
     {
         $this->scenario = new Scenario();
         $this->feature->addScenario($this->scenario);
-        $this->scenario->setName($type === Scenario::TYPE_BACKGROUND ? '' : substr($line, 10));
+        $this->scenario->setName($type === Scenario::TYPE_BACKGROUND ? '' : substr($line, strpos($line, ':') + 1));
         $this->scenario->setType($type);
     }
 
@@ -214,6 +228,28 @@ class FeatureParser
     }
 
     /**
+     * Consumes examples
+     */
+    private function consumeExamples()
+    {
+        $value = [];
+        $parameters = $this->tableStringToArray($this->contents[$this->index]);
+        $this->index++;
+
+        do {
+            $value[] = array_combine(
+                $parameters,
+                $this->tableStringToArray($this->contents[$this->index])
+            );
+            $this->index++;
+        } while ($this->index < count($this->contents) && substr(trim($this->contents[$this->index]), 0, 1) === '|');
+        $this->index--;
+
+        $this->scenario->setExamples($value);
+        $this->consumeExamples = false;
+    }
+
+    /**
      * @param string $line
      *
      * @return array
@@ -245,8 +281,11 @@ class FeatureParser
         if (substr($line, 0, 11) === 'Background:') {
             return self::TYPE_BACKGROUND;
         }
-        if (substr($line, 0, 9) === 'Scenario:') {
+        if (substr($line, 0, 9) === 'Scenario:' || substr($line, 0, 17) === 'Scenario Outline:') {
             return self::TYPE_SCENARIO;
+        }
+        if (substr($line, 0, 9) === 'Examples:') {
+            return self::TYPE_EXAMPLES;
         }
         if (substr($line, 0, 5) === 'Given') {
             return self::TYPE_STEP_GIVEN;
