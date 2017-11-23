@@ -96,4 +96,16 @@ class ProjectController extends Controller
     {
         return new JsonResponse($this->get('app.manager.project')->retrieveProjectGitInfo($projectSlug));
     }
+
+    /**
+     * @Route("/projects/{projectSlug}/steps", methods={"GET"})
+     *
+     * @param string $projectSlug
+     *
+     * @return JsonResponse
+     */
+    public function stepsAction($projectSlug)
+    {
+        return new JsonResponse($this->get('app.manager.project')->retrieveSteps($projectSlug));
+    }
 }

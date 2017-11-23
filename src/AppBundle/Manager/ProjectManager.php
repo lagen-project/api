@@ -6,7 +6,11 @@ use AppBundle\Exception\ProjectConfigurationNotFoundException;
 use AppBundle\Exception\ProjectNotFoundException;
 use AppBundle\Exception\ProjectNotInstallableException;
 use AppBundle\Exception\ProjectNotInstalledException;
+use AppBundle\Model\Feature;
+use AppBundle\Model\Scenario;
+use AppBundle\Model\Step;
 use AppBundle\Parser\FeatureParser;
+use AppBundle\Utils\ArrayUtils;
 use AppBundle\Utils\Git;
 use Cocur\Slugify\Slugify;
 use Symfony\Component\Filesystem\Filesystem;
@@ -100,15 +104,9 @@ class ProjectManager
      */
     public function getProject($projectSlug)
     {
-        $dirName = sprintf('%s/%s', $this->projectsDir, $projectSlug);
-        if (!$this->filesystem->exists($dirName)) {
-            throw new ProjectNotFoundException();
-        }
+        $finder = $this->checkProjectAndRetrieveFeaturesFinder($projectSlug);
 
         $features = [];
-        $finder = new Finder();
-        $finder->files()->name('*.feature')->in($dirName);
-
         foreach ($finder as $feature) {
             $features[] = [
                 'slug' => $feature->getBasename(),
@@ -263,5 +261,68 @@ class ProjectManager
         } catch (ProjectNotInstalledException $e) {
             return null;
         }
+    }
+
+    /**
+     * @param string $projectSlug
+     *
+     * @return array
+     */
+    public function retrieveSteps($projectSlug)
+    {
+        $finder = $this->checkProjectAndRetrieveFeaturesFinder($projectSlug);
+
+        $sentences = array_unique(ArrayUtils::flatten(array_map(function(\SplFileInfo $feature) {
+            return array_map(function(Scenario $scenario) {
+                return array_map(
+                    function(Step $step) {
+                        return $step->getSentence();
+                    }, $scenario->getSteps());
+            }, $this->featureParser->parse($feature->getPathname())->getScenarios());
+        }, iterator_to_array($finder))));
+
+        sort($sentences);
+
+        return $sentences;
+    }
+
+    /**
+     * @param string $projectSlug
+     *
+     * @return string
+     *
+     * @throws ProjectNotFoundException
+     */
+    private function getProjectDirectory($projectSlug)
+    {
+        $dirName = sprintf('%s/%s', $this->projectsDir, $projectSlug);
+        if (!$this->filesystem->exists($dirName)) {
+            throw new ProjectNotFoundException();
+        }
+
+        return $dirName;
+    }
+
+    /**
+     * @param string $projectDirName
+     *
+     * @return Finder
+     */
+    private function getFeaturesFinder($projectDirName)
+    {
+        $finder = new Finder();
+        $finder->files()->name('*.feature')->in($projectDirName);
+
+        return $finder;
+    }
+
+    /**
+     * @param string $projectSlug
+     *
+     * @return Finder
+     */
+    private function checkProjectAndRetrieveFeaturesFinder($projectSlug)
+    {
+        return $this->getFeaturesFinder($this->getProjectDirectory($projectSlug));
     }
 }
