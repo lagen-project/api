@@ -37,7 +37,10 @@ class OriginHttpHeaderSubscriber implements EventSubscriberInterface
                     Request::METHOD_PUT,
                     Request::METHOD_DELETE
                 ]),
-                'Access-Control-Allow-Headers' => 'content-type'
+                'Access-Control-Allow-Headers' => implode(',', [
+                    'content-type',
+                    'authentication'
+                ])
             ]);
             $event->setResponse($response);
         }

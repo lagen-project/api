@@ -5,7 +5,7 @@ security:
     providers:
 #        chain_provider:
 #            chain:
-#                providers: [ fos_userbundle, ldap ]
+#                providers: [ db, ldap ]
         db:
             entity:
                 class: AppBundle:User
