@@ -5,3 +5,8 @@ services:
             - "%allowed_origins%"
         tags:
             - { name: kernel.event_subscriber }
+
+    app.event.listener.authentication_failure:
+        class: AppBundle\Event\Listener\AccessDeniedExceptionListener
+        tags:
+            - { name: kernel.event_listener, event: kernel.exception, priority: 1 }
