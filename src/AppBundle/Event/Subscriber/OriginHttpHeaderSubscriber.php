@@ -39,7 +39,7 @@ class OriginHttpHeaderSubscriber implements EventSubscriberInterface
                 ]),
                 'Access-Control-Allow-Headers' => implode(',', [
                     'content-type',
-                    'authentication'
+                    'Authorization'
                 ])
             ]);
             $event->setResponse($response);
