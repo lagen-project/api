@@ -6,7 +6,6 @@ use AppBundle\Exception\ProjectConfigurationNotFoundException;
 use AppBundle\Exception\ProjectNotFoundException;
 use AppBundle\Exception\ProjectNotInstallableException;
 use AppBundle\Exception\ProjectNotInstalledException;
-use AppBundle\Model\Feature;
 use AppBundle\Model\Scenario;
 use AppBundle\Model\Step;
 use AppBundle\Parser\FeatureParser;
