@@ -45,8 +45,8 @@ class FeatureToStringTransformer
             $asArray[] = sprintf(
                 '  %s: %s',
                 $scenario->getType() === Scenario::TYPE_BACKGROUND ? 'Background' :
-                    $scenario->isOutline() ? 'Scenario Outline' : 'Scenario',
-                $scenario->getName()
+                    ($scenario->isOutline() ? 'Scenario Outline' : 'Scenario'),
+                trim($scenario->getName())
             );
             foreach ($scenario->getSteps() as $step) {
                 $asArray[] = sprintf('    %s %s', $this->transformType($step->getType()), $step->getSentence());
