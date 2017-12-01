@@ -154,7 +154,7 @@ class ProjectManager
             'cd %s/%s && %s',
             $this->deploysDir,
             $projectSlug,
-            $lagenConfig['install']
+            is_array($lagenConfig['install']) ? implode('; ', $lagenConfig['install']) : $lagenConfig['install']
         ));
         $process->setTimeout(0);
         $process->start();
