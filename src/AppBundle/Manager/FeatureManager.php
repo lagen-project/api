@@ -10,7 +10,6 @@ use AppBundle\Parser\TestResultParser;
 use AppBundle\Transformer\FeatureToStringTransformer;
 use Cocur\Slugify\Slugify;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Process\Process;
 
 class FeatureManager
@@ -218,14 +217,25 @@ class FeatureManager
         $testCmd = $this->projectManager->retrieveProjectLagenConfig($projectSlug)['test'];
         $featureMetadata = $this->getFeatureMetadata($projectSlug, $featureSlug);
 
-        $cmd = sprintf(
-            'cd %s/%s && mv %s/%s %s/%s.backup && cp %s/%s/%s %s/%s && %s %s/%s; mv %s/%s.backup %s/%s',
+        $move = file_exists(sprintf(
+            '%s/%s/%s/%s',
             $this->deploysDir,
             $projectSlug,
             $featureMetadata['dir'],
-            $featureMetadata['filename'],
-            $featureMetadata['dir'],
-            $featureMetadata['filename'],
+            $featureMetadata['filename'])
+        );
+
+        $cmd = sprintf(
+            'cd %s/%s %s && cp %s/%s/%s %s/%s && %s %s/%s; %s',
+            $this->deploysDir,
+            $projectSlug,
+            $move ? sprintf(
+                '&& mv %s/%s %s/%s.backup',
+                $featureMetadata['dir'],
+                $featureMetadata['filename'],
+                $featureMetadata['dir'],
+                $featureMetadata['filename']
+            ) : '',
             $this->projectsDir,
             $projectSlug,
             $featureSlug,
@@ -234,10 +244,13 @@ class FeatureManager
             $testCmd,
             $featureMetadata['dir'],
             $featureMetadata['filename'],
-            $featureMetadata['dir'],
-            $featureMetadata['filename'],
-            $featureMetadata['dir'],
-            $featureMetadata['filename']
+            $move ? sprintf(
+                'mv %s/%s.backup %s/%s',
+                $featureMetadata['dir'],
+                $featureMetadata['filename'],
+                $featureMetadata['dir'],
+                $featureMetadata['filename']
+            ) : ''
         );
 
         $process = new Process($cmd);
