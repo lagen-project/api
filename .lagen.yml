@@ -5,5 +5,5 @@ server:
     password: plop
 project_slug: lagen-api
 root_dir: features
-install: "make install"
+install: "composer install"
 test: "make test"
