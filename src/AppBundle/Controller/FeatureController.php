@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Exception\FeatureRunErrorException;
 use AppBundle\Model\Feature;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -96,7 +97,14 @@ class FeatureController extends Controller
      */
     public function runAction($projectSlug, $featureSlug)
     {
-        return $this->handleResponse($this->get('app.manager.feature')->runFeature($projectSlug, $featureSlug));
+        try {
+            return $this->handleResponse($this->get('app.manager.feature')->runFeature($projectSlug, $featureSlug));
+        } catch (FeatureRunErrorException $e) {
+            return new JsonResponse([
+                'error' => 'feature_run',
+                'message' => $e->getMessage()
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
     /**

@@ -2,6 +2,7 @@
 
 namespace AppBundle\Manager;
 
+use AppBundle\Exception\FeatureRunErrorException;
 use AppBundle\Exception\ProjectConfigurationNotFoundException;
 use AppBundle\Model\Feature;
 use AppBundle\Parser\FeatureParser;
@@ -9,6 +10,7 @@ use AppBundle\Parser\TestResultParser;
 use AppBundle\Transformer\FeatureToStringTransformer;
 use Cocur\Slugify\Slugify;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Process\Process;
 
 class FeatureManager
@@ -240,6 +242,10 @@ class FeatureManager
 
         $process = new Process($cmd);
         $process->run();
+
+        if ($process->getErrorOutput() !== '') {
+            throw new FeatureRunErrorException($process->getErrorOutput());
+        }
 
         return $this->testResultParser->parse($process->getOutput(), $feature);
     }
