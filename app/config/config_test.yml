@@ -18,3 +18,7 @@ swiftmailer:
 parameters:
     projects_root_dir: "%kernel.root_dir%/../tests/projects"
     database_path: "%kernel.root_dir%/../tests/data/data.sqlite"
+
+lexik_jwt_authentication:
+    private_key_path:   '%kernel.root_dir%/../var/jwt/private-test.pem'
+    public_key_path:    '%kernel.root_dir%/../var/jwt/public-test.pem'

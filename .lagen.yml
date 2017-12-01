@@ -5,5 +5,5 @@ server:
     password: plop
 project_slug: lagen-api
 root_dir: features
-install: "composer install && mkdir -p tests/data && php bin/console doctrine:database:create --env=test && php bin/console doctrine:schema:update --force --env=test"
+install: "composer install && mkdir -p tests/data && php bin/console doctrine:database:create --env=test && php bin/console doctrine:schema:update --force --env=test && openssl genrsa -out var/jwt/private-test.pem -aes256 4096 && openssl rsa -pubout -in var/jwt/private-test.pem -out var/jwt/public-test.pem"
 test: "./vendor/bin/behat --format=progress"
