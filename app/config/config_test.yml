@@ -17,3 +17,4 @@ swiftmailer:
 
 parameters:
     projects_root_dir: "%kernel.root_dir%/../tests/projects"
+    database_path: "%kernel.root_dir%/../tests/data/data.sqlite"
