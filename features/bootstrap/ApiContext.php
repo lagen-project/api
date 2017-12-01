@@ -16,6 +16,11 @@ class ApiContext extends ContainerAwareContext
     private $response;
 
     /**
+     * @var string
+     */
+    private $token;
+
+    /**
      * @var EntityManager
      */
     private $em;
@@ -28,6 +33,7 @@ class ApiContext extends ContainerAwareContext
         $this->em = $this->getContainer()->get('doctrine.orm.entity_manager');
         $this->em->getConnection()->executeQuery('DELETE FROM user');
         $this->em->getConnection()->executeQuery('VACUUM');
+        $this->token = null;
     }
 
     /**
@@ -52,15 +58,7 @@ class ApiContext extends ContainerAwareContext
         $body = $bodyOrParams instanceof PyStringNode ? $bodyOrParams->getRaw() : null;
         $params = $bodyOrParams instanceof TableNode ? $bodyOrParams->getHash()[0] : [];
 
-        $client = $this->getContainer()->get('test.client');
-        $server = array(
-            'CONTENT_TYPE' => 'application/json',
-            'HTTP_ACCEPT'  => 'application/json',
-        );
-
-        $client->restart();
-        $client->request($method, $uri, $params, [], $server, $body);
-        $this->response = $client->getResponse();
+        $this->response = $this->sendRequest($method, $uri, $params, $body);
     }
 
     /**
@@ -179,5 +177,53 @@ class ApiContext extends ContainerAwareContext
         }
 
         $this->em->flush();
+    }
+
+    /**
+     * @Given I'm logging in with username :username and password :password
+     *
+     * @param string $username
+     * @param string $password
+     *
+     * @throws \Exception
+     */
+    public function imLoggingInWithUsernameAndPassword($username, $password)
+    {
+        $loginResponse = $this->sendRequest('POST', 'login_check', [
+            '_username' => $username,
+            '_password' => $password
+        ]);
+
+        if (!$loginResponse->getStatusCode() === Response::HTTP_OK) {
+            throw new \Exception('Failed to login');
+        }
+
+        $this->token = json_decode($loginResponse->getContent())->token;
+    }
+
+    /**
+     * @param string $method
+     * @param string $uri
+     * @param array $params
+     * @param string $body
+     *
+     * @return Response
+     */
+    private function sendRequest($method, $uri, array $params = [], $body = null)
+    {
+        $client = $this->getContainer()->get('test.client');
+        $server = [
+            'CONTENT_TYPE' => 'application/json',
+            'HTTP_ACCEPT'  => 'application/json',
+        ];
+
+        if ($this->token) {
+            $server['HTTP_Authorization'] = sprintf('Bearer %s', $this->token);
+        }
+
+        $client->restart();
+        $client->request($method, $uri, $params, [], $server, $body);
+
+        return  $client->getResponse();
     }
 }

@@ -3,6 +3,12 @@ Feature: Project API
   As an API consumer, like an user interface,
   I should have a functioning projects API
 
+  Background:
+    Given I have this user in database
+      | username | password | roles |
+      | pierre   | rolland  | user  |
+    And I'm logging in with username "pierre" and password "rolland"
+
   Scenario: Create a new project
     Given I have no projects installed
     When I send a "POST" request to "projects" with the following body:
@@ -26,6 +32,7 @@ Feature: Project API
     {
         "name": "TEST LAGEN API",
         "gitRepository": "",
+        "gitBranch": "",
         "slug": "test-lagen-api",
         "features": []
     }
