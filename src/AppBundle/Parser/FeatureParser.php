@@ -201,7 +201,7 @@ class FeatureParser
     {
         $description = '';
         $line = '';
-        while (substr($line, 0, 8) !== 'Scenario' && substr($line, 0, 9) !== 'Background') {
+        while (substr($line, 0, 8) !== 'Scenario' && substr($line, 0, 10) !== 'Background') {
             $description .= trim($this->contents[$this->index], " \t\n\r\0\x0B") . "\n";
             $this->index++;
             $line = trim($this->contents[$this->index], " \t\n\r\0\x0B");
