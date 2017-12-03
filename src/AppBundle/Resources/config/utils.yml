@@ -1,6 +1,0 @@
-services:
-    app.utils.git:
-        class: AppBundle\Utils\Git
-        arguments:
-            - "@filesystem"
-            - "%deploys_root_dir%"

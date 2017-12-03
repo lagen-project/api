@@ -1,0 +1,7 @@
+parameters:
+    jms_serializer.camel_case_naming_strategy.class: JMS\Serializer\Naming\IdenticalPropertyNamingStrategy
+
+jms_serializer:
+    visitors:
+        xml:
+            format_output: '%kernel.debug%'

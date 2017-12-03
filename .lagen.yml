@@ -10,6 +10,6 @@ install:
     - "mkdir -p tests/data var/jwt"
     - "php bin/console doctrine:database:create --env=test"
     - "php bin/console doctrine:schema:update --force --env=test"
-    - "openssl genrsa -out var/jwt/private-test.pem -passout pass:lagen"
-    - "openssl rsa -pubout -in var/jwt/private-test.pem -out var/jwt/public-test.pem -passin pass:lagen"
+    - "openssl genrsa -out config/jwt/private.pem -passout pass:lagen"
+    - "openssl rsa -pubout -in config/jwt/private.pem -out config/jwt/public.pem -passin pass:lagen"
 test: "./vendor/bin/behat --format=progress"

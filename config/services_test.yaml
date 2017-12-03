@@ -1,0 +1,8 @@
+parameters:
+    projects_root_dir: '%kernel.project_dir%/tests/projects'
+    deploys_root_dir: '%kernel.project_dir%/tests/deploys'
+    env(DATABASE_PATH): 'tests/data/data.sqlite'
+    env(ALLOWED_ORIGINS): ''
+    env(JWT_PRIVATE_KEY_PATH): tests/config/jwt/private.pem
+    env(JWT_PUBLIC_KEY_PATH): tests/config/jwt/public.pem
+    env(JWT_PASSPHRASE): lagen

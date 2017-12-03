@@ -1,6 +1,6 @@
 <?php
 
-use AppBundle\Entity\User;
+use App\Entity\User;
 use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
 use Doctrine\ORM\EntityManager;
@@ -189,7 +189,7 @@ class ApiContext extends ContainerAwareContext
      */
     public function imLoggingInWithUsernameAndPassword($username, $password)
     {
-        $loginResponse = $this->sendRequest('POST', 'login_check', [
+        $loginResponse = $this->sendRequest('POST', 'login', [
             '_username' => $username,
             '_password' => $password
         ]);

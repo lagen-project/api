@@ -9,13 +9,13 @@ Feature: Login API
       | pierre   | rolland  | user  |
 
   Scenario: Successful login attempt
-    When I send a "POST" request to "login_check" with the following params:
+    When I send a "POST" request to "login" with the following params:
       | _username | _password |
       | pierre    | rolland   |
     Then I should have a 200 response containing the "token" key
 
   Scenario: Failed login attempt
-    When I send a "POST" request to "login_check" with the following params:
+    When I send a "POST" request to "login" with the following params:
       | _username | _password |
       | fake      | pierrot   |
     Then I should have a 401 response
