@@ -39,6 +39,7 @@ services:
             - "@slugify"
             - '@App\Parser\FeatureParser'
             - '@App\Utils\Git'
+            - '@logger'
 
     App\Manager\FeatureManager:
         public: true

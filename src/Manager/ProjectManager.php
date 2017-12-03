@@ -12,6 +12,7 @@ use App\Parser\FeatureParser;
 use App\Utils\ArrayUtils;
 use App\Utils\Git;
 use Cocur\Slugify\Slugify;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -52,12 +53,18 @@ class ProjectManager
     private $git;
 
     /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
      * @param Filesystem $filesystem
      * @param string $projectsDir
      * @param string $deploysDir
      * @param Slugify $slugify
      * @param FeatureParser $featureParser
      * @param Git $git
+     * @param LoggerInterface $logger
      */
     public function __construct(
         Filesystem $filesystem,
@@ -65,7 +72,8 @@ class ProjectManager
         $deploysDir,
         Slugify $slugify,
         FeatureParser $featureParser,
-        Git $git
+        Git $git,
+        LoggerInterface $logger
     ) {
         $this->filesystem = $filesystem;
         $this->projectsDir = $projectsDir;
@@ -73,6 +81,7 @@ class ProjectManager
         $this->slugify = $slugify;
         $this->featureParser = $featureParser;
         $this->git = $git;
+        $this->logger = $logger;
     }
 
     /**
@@ -150,12 +159,14 @@ class ProjectManager
 
         $response = new StreamedResponse();
         $response->headers->add(['Content-type' => 'application/json']);
-        $process = new Process(sprintf(
+        $installCmd = sprintf(
             'cd %s/%s && %s',
             $this->deploysDir,
             $projectSlug,
-            is_array($lagenConfig['install']) ? implode('; ', $lagenConfig['install']) : $lagenConfig['install']
-        ));
+            is_array($lagenConfig['install']) ? implode(' && ', $lagenConfig['install']) : $lagenConfig['install']
+        );
+        $this->logger->info(sprintf('Now running install command : %s', $installCmd));
+        $process = new Process($installCmd);
         $process->setTimeout(0);
         $process->start();
         $response->setCallback(function () use ($process) {
