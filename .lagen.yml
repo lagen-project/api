@@ -6,7 +6,7 @@ server:
 project_slug: lagen-api
 root_dir: features
 install:
-    - "composer install"
+    - "composer install -vvv"
     - "mkdir -p tests/data tests/config/jwt"
     - "php bin/console doctrine:database:create --env=test"
     - "php bin/console doctrine:schema:update --force --env=test"
