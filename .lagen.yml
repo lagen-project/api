@@ -7,11 +7,12 @@ project_slug: lagen-api
 root_dir: features
 install:
     - "composer install -vvv"
+    - "export PATH=$PATH:./vendor/bin"
     - "sed -i.bk s:var/data/data.sqlite:tests/data/data.sqlite: .env"
     - "sed -i.bk s:APP_ENV=dev:APP_ENV=test: .env"
     - "rm .env.bk"
     - "rm -rf var/cache/*"
-    - "mkdir -p tests/data tests/config/jwt"
+    - "mkdir -p var/data tests/data tests/config/jwt"
     - "php bin/console doctrine:database:create --env=test"
     - "php bin/console doctrine:schema:update --force --env=test"
     - "openssl genrsa -out tests/config/jwt/private.pem -passout pass:lagen"
