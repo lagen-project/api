@@ -7,6 +7,8 @@ project_slug: lagen-api
 root_dir: features
 install:
     - "composer install -vvv"
+    - "ls -l vendor/bin"
+    - "which sh"
     - "sed -i.bk s:var/data/data.sqlite:test/data/data.sqlite: .env"
     - "sed -i.bk s:APP_ENV=dev:APP_ENV=test: .env"
     - "rm .env.bk"
