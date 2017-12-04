@@ -42,10 +42,11 @@ class Git
 
     /**
      * @param string $branch
+     * @param string $directory
      */
-    public function changeBranch($branch)
+    public function changeBranch($branch, $directory = '')
     {
-        $this->processCommand(sprintf('git branch %s', $branch));
+        $this->processCommand(sprintf('cd %s && git checkout %s', $this->getDir($directory), $branch));
     }
 
     /**
@@ -58,11 +59,7 @@ class Git
      */
     public function getLastCommitInfo($directory)
     {
-        $dir = sprintf('%s/%s', $this->deploysDir, $directory);
-
-        if (!$this->filesystem->exists($dir)) {
-            throw new ProjectNotInstalledException();
-        }
+        $dir = $this->getDir($directory);
 
         $output = explode("\n", $this->processCommand(sprintf('cd %s && git log | head -n 4', $dir)));
         $isMerge = substr($output[1], 0, 1) === 'M';
@@ -100,5 +97,23 @@ class Git
         if (!$this->filesystem->exists($this->deploysDir)) {
             $this->filesystem->mkdir($this->deploysDir);
         }
+    }
+
+    /**
+     * @param string $subDir
+     *
+     * @return string
+     *
+     * @throws ProjectNotInstalledException
+     */
+    private function getDir($subDir)
+    {
+        $dir = sprintf('%s/%s', $this->deploysDir, $subDir);
+
+        if (!$this->filesystem->exists($dir)) {
+            throw new ProjectNotInstalledException();
+        }
+
+        return $dir;
     }
 }
