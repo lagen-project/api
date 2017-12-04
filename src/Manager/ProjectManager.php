@@ -167,7 +167,7 @@ class ProjectManager
             'cd %s/%s && %s',
             $this->deploysDir,
             $projectSlug,
-            is_array($lagenConfig['install']) ? implode(' && ', $lagenConfig['install']) : $lagenConfig['install']
+            is_array($lagenConfig['install']) ? implode(' ; ', $lagenConfig['install']) : $lagenConfig['install']
         );
         $this->logger->info(sprintf('Now running install command : %s', $installCmd));
         $process = new Process($installCmd);
