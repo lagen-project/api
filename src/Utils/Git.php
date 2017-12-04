@@ -41,6 +41,14 @@ class Git
     }
 
     /**
+     * @param string $branch
+     */
+    public function changeBranch($branch)
+    {
+        $this->processCommand(sprintf('git branch %s', $branch));
+    }
+
+    /**
      * @param string $directory
      *
      * @return array

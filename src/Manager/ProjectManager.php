@@ -152,6 +152,10 @@ class ProjectManager
 
         $this->git->cloneRepository($projectConfig['gitRepository'], $projectSlug);
 
+        if (isset($projectConfig['gitBranch'])) {
+            $this->git->changeBranch($projectConfig['gitBranch']);
+        }
+
         $lagenConfig = $this->retrieveProjectLagenConfig($projectSlug);
         if (!isset($lagenConfig['install'])) {
             throw new ProjectNotInstallableException();
