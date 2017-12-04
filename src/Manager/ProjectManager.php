@@ -153,7 +153,7 @@ class ProjectManager
         $this->git->cloneRepository($projectConfig['gitRepository'], $projectSlug);
 
         if (isset($projectConfig['gitBranch'])) {
-            $this->git->changeBranch($projectConfig['gitBranch']);
+            $this->git->changeBranch($projectConfig['gitBranch'], $projectSlug);
         }
 
         $lagenConfig = $this->retrieveProjectLagenConfig($projectSlug);
