@@ -14,23 +14,16 @@ class FeatureController extends Controller
 {
     /**
      * @Route("/projects/{projectSlug}/features", methods={"GET"})
-     *
-     * @return Response
      */
-    public function getCollection()
+    public function getCollection(): Response
     {
         return $this->handleResponse([]);
     }
 
     /**
      * @Route("/projects/{projectSlug}/features/{featureSlug}", methods={"GET"})
-     *
-     * @param string $projectSlug
-     * @param string $featureSlug
-     *
-     * @return Response
      */
-    public function getSingle(string $projectSlug, string $featureSlug)
+    public function getSingle(string $projectSlug, string $featureSlug): Response
     {
         return $this->handleResponse(
             $this->get(FeatureManager::class)->getFeature($projectSlug, $featureSlug)
@@ -39,13 +32,8 @@ class FeatureController extends Controller
 
     /**
      * @Route("/projects/{projectSlug}/features", methods={"POST"})
-     *
-     * @param string $projectSlug
-     * @param Request $request
-     *
-     * @return Response
      */
-    public function post(string $projectSlug, Request $request)
+    public function post(string $projectSlug, Request $request): Response
     {
         $requestContent = json_decode($request->getContent(), true);
         $this->get(FeatureManager::class)->createFeature($projectSlug, $requestContent['name']);
@@ -55,14 +43,8 @@ class FeatureController extends Controller
 
     /**
      * @Route("/projects/{projectSlug}/features/{featureSlug}", methods={"PUT"})
-     *
-     * @param string $projectSlug
-     * @param string $featureSlug
-     * @param Request $request
-     *
-     * @return Response
      */
-    public function put(string $projectSlug, string $featureSlug, Request $request)
+    public function put(string $projectSlug, string $featureSlug, Request $request): Response
     {
         $feature = $this
             ->get('jms_serializer')
@@ -75,13 +57,8 @@ class FeatureController extends Controller
 
     /**
      * @Route("/projects/{projectSlug}/features/{featureSlug}/export", methods={"GET"})
-     *
-     * @param string $projectSlug
-     * @param string $featureSlug
-     *
-     * @return Response
      */
-    public function export(string $projectSlug, string $featureSlug)
+    public function export(string $projectSlug, string $featureSlug): Response
     {
         return new Response(
             $this->get(FeatureManager::class)->exportFeature($projectSlug, $featureSlug)
@@ -90,13 +67,8 @@ class FeatureController extends Controller
 
     /**
      * @Route("/projects/{projectSlug}/features/{featureSlug}/run", methods={"GET"})
-     *
-     * @param string $projectSlug
-     * @param string $featureSlug
-     *
-     * @return Response
      */
-    public function run(string $projectSlug, string $featureSlug)
+    public function run(string $projectSlug, string $featureSlug): Response
     {
         try {
             return $this->handleResponse($this->get(FeatureManager::class)->runFeature($projectSlug, $featureSlug));
@@ -110,13 +82,8 @@ class FeatureController extends Controller
 
     /**
      * @Route("/projects/{projectSlug}/features/{featureSlug}/metadata", methods={"GET"})
-     *
-     * @param string $projectSlug
-     * @param string $featureSlug
-     *
-     * @return Response
      */
-    public function getMetadata(string $projectSlug, string $featureSlug)
+    public function getMetadata(string $projectSlug, string $featureSlug): Response
     {
         $metadata = $this
             ->get(FeatureManager::class)
@@ -127,14 +94,8 @@ class FeatureController extends Controller
 
     /**
      * @Route("/projects/{projectSlug}/features/{featureSlug}/metadata", methods={"POST"})
-     *
-     * @param string $projectSlug
-     * @param string $featureSlug
-     * @param Request $request
-     *
-     * @return JsonResponse
      */
-    public function postMetadata(string $projectSlug, string $featureSlug, Request $request)
+    public function postMetadata(string $projectSlug, string $featureSlug, Request $request): Response
     {
         $this
             ->get(FeatureManager::class)

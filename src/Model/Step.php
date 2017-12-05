@@ -40,66 +40,42 @@ class Step
      */
     private $type;
 
-    /**
-     * @return Scenario
-     */
-    public function getScenario()
+    public function getScenario(): Scenario
     {
         return $this->scenario;
     }
 
-    /**
-     * @param Scenario $scenario
-     */
-    public function setScenario($scenario)
+    public function setScenario(Scenario $scenario = null): void
     {
         $this->scenario = $scenario;
     }
 
-    /**
-     * @return string
-     */
-    public function getSentence()
+    public function getSentence(): string
     {
         return $this->sentence;
     }
 
-    /**
-     * @param string $sentence
-     */
-    public function setSentence($sentence)
+    public function setSentence(string $sentence): void
     {
         $this->sentence = $sentence;
     }
 
-    /**
-     * @return StepParameter
-     */
-    public function getParameter()
+    public function getParameter(): StepParameter
     {
         return $this->parameter;
     }
 
-    /**
-     * @param StepParameter $parameter
-     */
-    public function setParameter(StepParameter $parameter)
+    public function setParameter(StepParameter $parameter): void
     {
         $this->parameter = $parameter;
     }
 
-    /**
-     * @return string
-     */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }
 
-    /**
-     * @param string $type
-     */
-    public function setType($type)
+    public function setType(string $type): void
     {
         $this->type = $type;
     }

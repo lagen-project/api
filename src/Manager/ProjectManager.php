@@ -60,16 +60,6 @@ class ProjectManager
      */
     private $logger;
 
-    /**
-     * @param Filesystem $filesystem
-     * @param string $projectsDir
-     * @param string $deploysDir
-     * @param string $nodesDir
-     * @param Slugify $slugify
-     * @param FeatureParser $featureParser
-     * @param Git $git
-     * @param LoggerInterface $logger
-     */
     public function __construct(
         Filesystem $filesystem,
         string $projectsDir,
@@ -90,10 +80,7 @@ class ProjectManager
         $this->logger = $logger;
     }
 
-    /**
-     * @return array
-     */
-    public function getProjects()
+    public function getProjects(): array
     {
         $this->createRootDirIfNotExists();
         $projects = [];
@@ -110,13 +97,9 @@ class ProjectManager
     }
 
     /**
-     * @param string $projectSlug
-     *
-     * @return array
-     *
      * @throws ProjectNotFoundException
      */
-    public function getProject($projectSlug)
+    public function getProject(string $projectSlug): array
     {
         $finder = $this->checkProjectAndRetrieveFeaturesFinder($projectSlug);
 
@@ -141,11 +124,9 @@ class ProjectManager
     }
 
     /**
-     * @param string $projectSlug
-     *
      * @throws ProjectNotInstallableException
      */
-    public function installProject($projectSlug)
+    public function installProject(string $projectSlug): void
     {
         $projectConfig = $this->retrieveProjectConfig($projectSlug);
         $lagenConfig = $this->retrieveProjectLagenConfig($projectSlug);
@@ -178,10 +159,7 @@ class ProjectManager
         $this->filesystem->symlink($destination, sprintf('%s/%s/job', $this->projectsDir, $projectSlug));
     }
 
-    /**
-     * @param string $projectName
-     */
-    public function createProject($projectName)
+    public function createProject(string $projectName): void
     {
         $this->createRootDirIfNotExists();
         $slug = $this->slugify->slugify($projectName);
@@ -191,11 +169,7 @@ class ProjectManager
         ]);
     }
 
-    /**
-     * @param string $projectSlug
-     * @param array $changes
-     */
-    public function editProject($projectSlug, array $changes)
+    public function editProject(string $projectSlug, array $changes): void
     {
         $config = array_merge(
             $this->retrieveProjectConfig($projectSlug),
@@ -205,19 +179,14 @@ class ProjectManager
         $this->saveProjectConfig($projectSlug, $config);
     }
 
-    private function createRootDirIfNotExists()
+    private function createRootDirIfNotExists(): void
     {
         if (!$this->filesystem->exists($this->projectsDir)) {
             $this->filesystem->mkdir($this->projectsDir);
         }
     }
 
-    /**
-     * @param string $projectSlug
-     *
-     * @return array
-     */
-    private function retrieveProjectConfig($projectSlug)
+    private function retrieveProjectConfig(string $projectSlug): array
     {
         return json_decode(
             file_get_contents(sprintf('%s/%s/config.json', $this->projectsDir, $projectSlug)),
@@ -226,13 +195,9 @@ class ProjectManager
     }
 
     /**
-     * @param string $projectSlug
-     *
-     * @return array
-     *
      * @throws ProjectConfigurationNotFoundException
      */
-    public function retrieveProjectLagenConfig($projectSlug)
+    public function retrieveProjectLagenConfig(string $projectSlug): array
     {
         $file = sprintf('%s/%s/.lagen.yml', $this->deploysDir, $projectSlug);
 
@@ -243,11 +208,7 @@ class ProjectManager
         return Yaml::parse(file_get_contents($file));
     }
 
-    /**
-     * @param string $projectSlug
-     * @param array $config
-     */
-    private function saveProjectConfig($projectSlug, array $config)
+    private function saveProjectConfig(string $projectSlug, array $config): void
     {
         file_put_contents(
             sprintf('%s/%s/config.json', $this->projectsDir, $projectSlug),
@@ -255,12 +216,7 @@ class ProjectManager
         );
     }
 
-    /**
-     * @param string $projectSlug
-     *
-     * @return array|null
-     */
-    public function retrieveProjectGitInfo($projectSlug)
+    public function retrieveProjectGitInfo(string $projectSlug): array
     {
         try {
             return $this->git->getLastCommitInfo($projectSlug);
@@ -271,12 +227,7 @@ class ProjectManager
         }
     }
 
-    /**
-     * @param string $projectSlug
-     *
-     * @return array
-     */
-    public function retrieveSteps($projectSlug)
+    public function retrieveSteps(string $projectSlug): array
     {
         $finder = $this->checkProjectAndRetrieveFeaturesFinder($projectSlug);
 
@@ -295,13 +246,9 @@ class ProjectManager
     }
 
     /**
-     * @param string $projectSlug
-     *
-     * @return string
-     *
      * @throws ProjectNotFoundException
      */
-    private function getProjectDirectory($projectSlug)
+    private function getProjectDirectory(string $projectSlug): string
     {
         $dirName = sprintf('%s/%s', $this->projectsDir, $projectSlug);
         if (!$this->filesystem->exists($dirName)) {
@@ -311,12 +258,7 @@ class ProjectManager
         return $dirName;
     }
 
-    /**
-     * @param string $projectDirName
-     *
-     * @return Finder
-     */
-    private function getFeaturesFinder($projectDirName)
+    private function getFeaturesFinder(string $projectDirName): Finder
     {
         $finder = new Finder();
         $finder->files()->name('*.feature')->in($projectDirName);
@@ -324,12 +266,7 @@ class ProjectManager
         return $finder;
     }
 
-    /**
-     * @param string $projectSlug
-     *
-     * @return Finder
-     */
-    private function checkProjectAndRetrieveFeaturesFinder($projectSlug)
+    private function checkProjectAndRetrieveFeaturesFinder(string $projectSlug): Finder
     {
         return $this->getFeaturesFinder($this->getProjectDirectory($projectSlug));
     }

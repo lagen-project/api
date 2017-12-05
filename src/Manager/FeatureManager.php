@@ -54,20 +54,10 @@ class FeatureManager
      */
     private $testResultParser;
 
-    /**
-     * @param Filesystem $filesystem
-     * @param string $deploysDir
-     * @param string $projectsDir
-     * @param Slugify $slugify
-     * @param FeatureParser $featureParser
-     * @param FeatureToStringTransformer $featureToStringTransformer
-     * @param ProjectManager $projectManager
-     * @param TestResultParser $testResultParser
-     */
     public function __construct(
         Filesystem $filesystem,
-        $deploysDir,
-        $projectsDir,
+        string $deploysDir,
+        string $projectsDir,
         Slugify $slugify,
         FeatureParser $featureParser,
         FeatureToStringTransformer $featureToStringTransformer,
@@ -84,13 +74,7 @@ class FeatureManager
         $this->testResultParser = $testResultParser;
     }
 
-    /**
-     * @param string $projectSlug
-     * @param string $featureSlug
-     *
-     * @return Feature
-     */
-    public function getFeature($projectSlug, $featureSlug)
+    public function getFeature(string $projectSlug, string $featureSlug): Feature
     {
         $feature = $this->featureParser->parse(
             sprintf('%s/%s/%s', $this->projectsDir, $projectSlug, $featureSlug)
@@ -113,11 +97,7 @@ class FeatureManager
         return $feature;
     }
 
-    /**
-     * @param string $projectSlug
-     * @param string $featureName
-     */
-    public function createFeature($projectSlug, $featureName)
+    public function createFeature(string $projectSlug, string $featureName): void
     {
         file_put_contents(
             sprintf(
@@ -130,12 +110,7 @@ class FeatureManager
         );
     }
 
-    /**
-     * @param string $projectSlug
-     * @param string $featureSlug
-     * @param Feature $feature
-     */
-    public function editFeature($projectSlug, $featureSlug, Feature $feature)
+    public function editFeature(string $projectSlug, string $featureSlug, Feature $feature): void
     {
         file_put_contents(
             sprintf(
@@ -148,25 +123,14 @@ class FeatureManager
         );
     }
 
-    /**
-     * @param string $projectSlug
-     * @param string $featureSlug
-     *
-     * @return Feature
-     */
-    public function exportFeature($projectSlug, $featureSlug)
+    public function exportFeature(string $projectSlug, string $featureSlug): Feature
     {
         return file_get_contents(
             sprintf('%s/%s/%s', $this->projectsDir, $projectSlug, $featureSlug)
         );
     }
 
-    /**
-     * @param string $projectSlug
-     * @param string $featureSlug
-     * @param array $metadata
-     */
-    public function setFeatureMetadata($projectSlug, $featureSlug, array $metadata)
+    public function setFeatureMetadata(string $projectSlug, string $featureSlug, array $metadata): void
     {
         $this->checkMetadataFile($projectSlug);
         $file = sprintf('%s/%s/features.metadata.json', $this->projectsDir, $projectSlug);
@@ -178,13 +142,7 @@ class FeatureManager
         file_put_contents($file, json_encode($projectMetadata));
     }
 
-    /**
-     * @param string $projectSlug
-     * @param string $featureSlug
-     *
-     * @return array|null
-     */
-    public function getFeatureMetadata($projectSlug, $featureSlug)
+    public function getFeatureMetadata(string $projectSlug, string $featureSlug): array
     {
         $this->checkMetadataFile($projectSlug);
 
@@ -194,10 +152,7 @@ class FeatureManager
         return isset($metadata[$featureSlug]) ? $metadata[$featureSlug] : null;
     }
 
-    /**
-     * @param string $projectSlug
-     */
-    public function checkMetadataFile($projectSlug)
+    public function checkMetadataFile(string $projectSlug): void
     {
         $file = sprintf('%s/%s/features.metadata.json', $this->projectsDir, $projectSlug);
         if (!$this->filesystem->exists($file)) {
@@ -206,14 +161,9 @@ class FeatureManager
     }
 
     /**
-     * @param string $projectSlug
-     * @param string $featureSlug
-     *
-     * @return array
-     *
      * @throws FeatureRunErrorException
      */
-    public function runFeature($projectSlug, $featureSlug)
+    public function runFeature(string $projectSlug, string $featureSlug): array
     {
         $feature = $this->getFeature($projectSlug, $featureSlug);
         $testCmd = $this->projectManager->retrieveProjectLagenConfig($projectSlug)['test'];

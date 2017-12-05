@@ -4,12 +4,7 @@ namespace App\Transformer;
 
 class TableParameterToStringArrayTransformer
 {
-    /**
-     * @param array $table
-     *
-     * @return array
-     */
-    public function transform(array $table)
+    public function transform(array $table): array
     {
         $out = [];
         $columnsLengths = $this->getMaxColumnLengths($table);
@@ -29,12 +24,7 @@ class TableParameterToStringArrayTransformer
         return $out;
     }
 
-    /**
-     * @param array $table
-     *
-     * @return array
-     */
-    private function getMaxColumnLengths(array $table)
+    private function getMaxColumnLengths(array $table): array
     {
         $lengths = [];
         foreach ($table[0] as $columnId => $column) {

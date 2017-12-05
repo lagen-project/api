@@ -7,13 +7,7 @@ use App\Model\Scenario;
 
 class TestResultParser
 {
-    /**
-     * @param string $resultLine
-     * @param Feature $feature
-     *
-     * @return array
-     */
-    public function parse($resultLine, Feature $feature)
+    public function parse(string $resultLine, Feature $feature): array
     {
         $index = 0;
         $hasBg = $feature->getScenarios() && $feature->getScenarios()[0]->getType() === Scenario::TYPE_BACKGROUND;
@@ -43,12 +37,7 @@ class TestResultParser
         return $bgResult ? array_merge([$bgResult], $regularResults) : $regularResults;
     }
 
-    /**
-     * @param string $char
-     *
-     * @return array
-     */
-    private function convertResult($char)
+    private function convertResult(string $char): array
     {
         return [
             'success' => $char === '.',
@@ -56,12 +45,7 @@ class TestResultParser
         ];
     }
 
-    /**
-     * @param Scenario $scenario
-     *
-     * @return int
-     */
-    private function countResultAnalysis(Scenario $scenario)
+    private function countResultAnalysis(Scenario $scenario): int
     {
         return $scenario->isOutline() ?
             array_reduce($scenario->getExamples(), function($carry, $item) { return $carry + count($item); }) :

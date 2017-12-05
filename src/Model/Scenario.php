@@ -50,50 +50,32 @@ class Scenario
         $this->examples = [];
     }
 
-    /**
-     * @return string
-     */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }
 
-    /**
-     * @param string $type
-     */
-    public function setType($type)
+    public function setType(string $type): void
     {
         $this->type = $type;
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @param string $name
-     */
-    public function setName($name)
+    public function setName(string $name): void
     {
         $this->name = $name;
     }
 
-    /**
-     * @return Feature
-     */
-    public function getFeature()
+    public function getFeature(): Feature
     {
         return $this->feature;
     }
 
-    /**
-     * @param Feature $feature
-     */
-    public function setFeature($feature)
+    public function setFeature(Feature $feature = null): void
     {
         $this->feature = $feature;
     }
@@ -101,7 +83,7 @@ class Scenario
     /**
      * @return Step[]
      */
-    public function getSteps()
+    public function getSteps(): array
     {
         return $this->steps;
     }
@@ -109,7 +91,7 @@ class Scenario
     /**
      * @param Step[] $steps
      */
-    public function setSteps($steps)
+    public function setSteps(array $steps = []): void
     {
         $this->steps = $steps;
 
@@ -118,19 +100,13 @@ class Scenario
         }
     }
 
-    /**
-     * @param Step $step
-     */
-    public function addStep(Step $step)
+    public function addStep(Step $step): void
     {
         $this->steps[] = $step;
         $step->setScenario($this);
     }
 
-    /**
-     * @param Step $step
-     */
-    public function removeStep(Step $step)
+    public function removeStep(Step $step): void
     {
         foreach ($this->steps as $id => $s) {
             if ($s->getContent() === $step->getContent()) {
@@ -139,26 +115,17 @@ class Scenario
         }
     }
 
-    /**
-     * @return array
-     */
-    public function getExamples()
+    public function getExamples(): array
     {
         return $this->examples;
     }
 
-    /**
-     * @param array $examples
-     */
-    public function setExamples($examples)
+    public function setExamples(array $examples = []): void
     {
         $this->examples = $examples;
     }
 
-    /**
-     * @return bool
-     */
-    public function isOutline()
+    public function isOutline(): bool
     {
         return count($this->examples) > 0;
     }

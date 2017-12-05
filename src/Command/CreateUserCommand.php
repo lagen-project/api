@@ -10,10 +10,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class CreateUserCommand extends ContainerAwareCommand
 {
-    /**
-     * {@inheritdoc}
-     */
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('app:create-user')
@@ -23,10 +20,7 @@ class CreateUserCommand extends ContainerAwareCommand
         ;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): void
     {
         $em = $this->getContainer()->get('doctrine.orm.entity_manager');
         $encoder = $this->getContainer()->get('security.encoder_factory')->getEncoder(User::class);

@@ -16,17 +16,12 @@ class OriginHttpHeaderSubscriber implements EventSubscriberInterface
      */
     private $allowedOrigins;
 
-    /**
-     * @param string $allowedOrigins
-     */
     public function __construct(string $allowedOrigins)
     {
         $this->allowedOrigins = $allowedOrigins;
     }
-    /**
-     * @param GetResponseEvent $event
-     */
-    public function onKernelRequest(GetResponseEvent $event)
+
+    public function onKernelRequest(GetResponseEvent $event): void
     {
         if ($event->getRequest()->getMethod() === Request::METHOD_OPTIONS) {
             $response = new Response();
@@ -46,20 +41,16 @@ class OriginHttpHeaderSubscriber implements EventSubscriberInterface
             $event->setResponse($response);
         }
     }
-    /**
-     * @param FilterResponseEvent $event
-     */
-    public function onKernelResponse(FilterResponseEvent $event)
+
+    public function onKernelResponse(FilterResponseEvent $event): void
     {
         $response = $event->getResponse();
         $response->headers->add([
             'Access-Control-Allow-Origin' => $this->allowedOrigins
         ]);
     }
-    /**
-     * {@inheritdoc}
-     */
-    public static function getSubscribedEvents()
+
+    public static function getSubscribedEvents(): array
     {
         return [
             KernelEvents::REQUEST => ['onKernelRequest', 100],

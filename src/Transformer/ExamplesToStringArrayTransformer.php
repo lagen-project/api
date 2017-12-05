@@ -4,12 +4,7 @@ namespace App\Transformer;
 
 class ExamplesToStringArrayTransformer extends TableParameterToStringArrayTransformer
 {
-    /**
-     * @param array $table
-     *
-     * @return array
-     */
-    public function transform(array $table)
+    public function transform(array $table): array
     {
         return parent::transform(array_merge(
             [array_keys($table[0])],

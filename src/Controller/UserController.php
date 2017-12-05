@@ -10,20 +10,16 @@ class UserController extends Controller
 {
     /**
      * @Route("/login", methods={"POST"})
-     *
-     * @return JsonResponse
      */
-    public function login()
+    public function login(): JsonResponse
     {
         return new JsonResponse();
     }
 
     /**
      * @Route("/me", methods={"GET"})
-     *
-     * @return Response
      */
-    public function me()
+    public function me(): Response
     {
         return $this->handleResponse($this->getUser());
     }

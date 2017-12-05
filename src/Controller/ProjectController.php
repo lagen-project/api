@@ -15,22 +15,16 @@ class ProjectController extends Controller
 {
     /**
      * @Route("/projects", methods={"GET"})
-     *
-     * @return Response
      */
-    public function getCollection()
+    public function getCollection(): Response
     {
         return $this->handleResponse($this->get(ProjectManager::class)->getProjects());
     }
 
     /**
      * @Route("/projects/{projectSlug}", methods={"GET"})
-     *
-     * @param string $projectSlug
-     *
-     * @return Response
      */
-    public function getSingle(string $projectSlug)
+    public function getSingle(string $projectSlug): Response
     {
         try {
             $project = $this->get(ProjectManager::class)->getProject($projectSlug);
@@ -43,12 +37,8 @@ class ProjectController extends Controller
 
     /**
      * @Route("/projects", methods={"POST"})
-     *
-     * @param Request $request
-     *
-     * @return Response
      */
-    public function post(Request $request)
+    public function post(Request $request): Response
     {
         $requestContent = json_decode($request->getContent(), true);
         $this->get(ProjectManager::class)->createProject($requestContent['name']);
@@ -58,13 +48,8 @@ class ProjectController extends Controller
 
     /**
      * @Route("/projects/{projectSlug}", methods={"PUT"})
-     *
-     * @param string $projectSlug
-     * @param Request $request
-     *
-     * @return JsonResponse
      */
-    public function put(string $projectSlug, Request $request)
+    public function put(string $projectSlug, Request $request): JsonResponse
     {
         $this->get(ProjectManager::class)->editProject(
             $projectSlug,
@@ -76,12 +61,8 @@ class ProjectController extends Controller
 
     /**
      * @Route("/projects/{projectSlug}/install", methods={"GET"})
-     *
-     * @param string $projectSlug
-     *
-     * @return JsonResponse
      */
-    public function install(string $projectSlug)
+    public function install(string $projectSlug): JsonResponse
     {
         $this->get(ProjectManager::class)->installProject($projectSlug);
 
@@ -90,24 +71,16 @@ class ProjectController extends Controller
 
     /**
      * @Route("/projects/{projectSlug}/git", methods={"GET"})
-     *
-     * @param string $projectSlug
-     *
-     * @return JsonResponse
      */
-    public function git(string $projectSlug)
+    public function git(string $projectSlug): JsonResponse
     {
         return new JsonResponse($this->get(ProjectManager::class)->retrieveProjectGitInfo($projectSlug));
     }
 
     /**
      * @Route("/projects/{projectSlug}/steps", methods={"GET"})
-     *
-     * @param string $projectSlug
-     *
-     * @return JsonResponse
      */
-    public function steps(string $projectSlug)
+    public function steps(string $projectSlug): JsonResponse
     {
         return new JsonResponse($this->get(ProjectManager::class)->retrieveSteps($projectSlug));
     }

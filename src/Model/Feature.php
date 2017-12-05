@@ -39,34 +39,22 @@ class Feature
         $this->scenarios = [];
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @param string $name
-     */
-    public function setName($name)
+    public function setName(string $name): void
     {
         $this->name = $name;
     }
 
-    /**
-     * @return string
-     */
-    public function getDescription()
+    public function getDescription(): string
     {
         return $this->description;
     }
 
-    /**
-     * @param string $description
-     */
-    public function setDescription($description)
+    public function setDescription(string $description): void
     {
         $this->description = $description;
     }
@@ -74,15 +62,12 @@ class Feature
     /**
      * @return Scenario[]
      */
-    public function getScenarios()
+    public function getScenarios(): array
     {
         return $this->scenarios;
     }
 
-    /**
-     * @param Scenario[] $scenarios
-     */
-    public function setScenarios($scenarios)
+    public function setScenarios(array $scenarios = []): void
     {
         $this->scenarios = $scenarios;
 
@@ -91,19 +76,13 @@ class Feature
         }
     }
 
-    /**
-     * @param Scenario $scenario
-     */
-    public function addScenario(Scenario $scenario)
+    public function addScenario(Scenario $scenario): void
     {
         $this->scenarios[] = $scenario;
         $scenario->setFeature($this);
     }
 
-    /**
-     * @param Scenario $scenario
-     */
-    public function removeScenario(Scenario $scenario)
+    public function removeScenario(Scenario $scenario): void
     {
         foreach ($this->scenarios as $id => $s) {
             if ($s->getName() === $scenario->getName()) {
@@ -112,18 +91,12 @@ class Feature
         }
     }
 
-    /**
-     * @return bool
-     */
-    public function isRunnable()
+    public function isRunnable(): bool
     {
         return $this->runnable;
     }
 
-    /**
-     * @param bool $runnable
-     */
-    public function setRunnable($runnable)
+    public function setRunnable(bool $runnable)
     {
         $this->runnable = $runnable;
     }

@@ -8,14 +8,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class Controller extends BaseController
 {
-    /**
-     * @param string $className
-     * @param array $where
-     * @param array $orderBy
-     *
-     * @return Response
-     */
-    protected function handleBasicCollection(string $className, array $where = [], array $orderBy = [])
+    protected function handleBasicCollection(string $className, array $where = [], array $orderBy = []): Response
     {
         $collection = $this
             ->getDoctrine()
@@ -29,13 +22,9 @@ class Controller extends BaseController
     }
 
     /**
-     * @param object|array $object
-     * @param int $statusCode
-     * @param array $groups
-     *
-     * @return Response
+     * @param array|object $object
      */
-    protected function handleResponse($object, int $statusCode = Response::HTTP_OK, array $groups = [])
+    protected function handleResponse($object, int $statusCode = Response::HTTP_OK, array $groups = []): Response
     {
         $context = $groups ? SerializationContext::create()->setGroups($groups) : null;
         $serialized = $this->get('jms_serializer')->serialize($object, 'json', $context);
@@ -43,13 +32,7 @@ class Controller extends BaseController
         return $this->handleSerializedResponse($serialized, $statusCode);
     }
 
-    /**
-     * @param string $serialized
-     * @param int $statusCode
-     *
-     * @return Response
-     */
-    protected function handleSerializedResponse(string $serialized, int $statusCode = Response::HTTP_OK)
+    protected function handleSerializedResponse(string $serialized, int $statusCode = Response::HTTP_OK): Response
     {
         return new Response($serialized, $statusCode, ['Content-type' => 'application/json']);
     }

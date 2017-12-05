@@ -12,10 +12,7 @@ use Symfony\Component\Process\Process;
 
 class InstallWorkerCommand extends ContainerAwareCommand
 {
-    /**
-     * {@inheritdoc}
-     */
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('app:install-worker')
@@ -23,10 +20,7 @@ class InstallWorkerCommand extends ContainerAwareCommand
         ;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): void
     {
         $output->writeln('Install worker launched. Waiting for jobs to process... :)');
 

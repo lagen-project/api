@@ -4,12 +4,7 @@ namespace App\Utils;
 
 class ArrayUtils
 {
-    /**
-     * @param array $array
-     *
-     * @return array
-     */
-    public static function flatten(array $array)
+    public static function flatten(array $array): array
     {
         $flattened = [];
 

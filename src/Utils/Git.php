@@ -19,45 +19,29 @@ class Git
      */
     private $deploysDir;
 
-    /**
-     * @param Filesystem $filesystem
-     * @param string $deploysDir
-     */
     public function __construct(Filesystem $filesystem, string $deploysDir)
     {
         $this->filesystem = $filesystem;
         $this->deploysDir = $deploysDir;
     }
 
-    /**
-     * @param string $repository
-     * @param string $directory
-     */
-    public function cloneRepository($repository, $directory = '')
+    public function cloneRepository(string $repository, string $directory = ''): void
     {
         $dir = sprintf('%s/%s', $this->deploysDir, $directory);
         $this->processCommand(sprintf('rm -rf %s', $dir));
         $this->processCommand(sprintf('git clone %s %s', $repository, $dir));
     }
 
-    /**
-     * @param string $branch
-     * @param string $directory
-     */
-    public function changeBranch($branch, $directory = '')
+    public function changeBranch(string $branch, string $directory = ''): void
     {
         $this->processCommand(sprintf('cd %s && git checkout %s', $this->getDir($directory), $branch));
     }
 
     /**
-     * @param string $directory
-     *
-     * @return array
-     *
      * @throws ProcessFailedException
      * @throws ProjectNotInstalledException
      */
-    public function getLastCommitInfo($directory)
+    public function getLastCommitInfo(string $directory): array
     {
         $dir = $this->getDir($directory);
 
@@ -74,12 +58,7 @@ class Git
         ];
     }
 
-    /**
-     * @param string $command
-     *
-     * @return string
-     */
-    private function processCommand($command)
+    private function processCommand(string $command): string
     {
         $this->createRootDirIfNotExists();
         $process = new Process($command);
@@ -92,7 +71,7 @@ class Git
         return $process->getOutput();
     }
 
-    private function createRootDirIfNotExists()
+    private function createRootDirIfNotExists(): void
     {
         if (!$this->filesystem->exists($this->deploysDir)) {
             $this->filesystem->mkdir($this->deploysDir);
@@ -100,13 +79,9 @@ class Git
     }
 
     /**
-     * @param string $subDir
-     *
-     * @return string
-     *
      * @throws ProjectNotInstalledException
      */
-    private function getDir($subDir)
+    private function getDir(string $subDir): string
     {
         $dir = sprintf('%s/%s', $this->deploysDir, $subDir);
 

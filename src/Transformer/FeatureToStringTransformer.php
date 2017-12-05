@@ -19,10 +19,6 @@ class FeatureToStringTransformer
      */
     private $examplesTransformer;
 
-    /**
-     * @param TableParameterToStringArrayTransformer $tableParameterTransformer
-     * @param ExamplesToStringArrayTransformer $examplesTransformer
-     */
     public function __construct(
         TableParameterToStringArrayTransformer $tableParameterTransformer,
         ExamplesToStringArrayTransformer $examplesTransformer
@@ -31,12 +27,7 @@ class FeatureToStringTransformer
         $this->examplesTransformer = $examplesTransformer;
     }
 
-    /**
-     * @param Feature $feature
-     *
-     * @return string
-     */
-    public function transform(Feature $feature)
+    public function transform(Feature $feature): string
     {
         $asArray = ['Feature: ' . $feature->getName()];
         $asArray = array_merge($asArray, $this->transformDescription($feature->getDescription()));
@@ -79,12 +70,7 @@ class FeatureToStringTransformer
         return implode("\n", $asArray);
     }
 
-    /**
-     * @param int $type
-     *
-     * @return string
-     */
-    private function transformType($type)
+    private function transformType(int $type): string
     {
         $types = [
             Step::TYPE_GIVEN => 'Given',
@@ -97,12 +83,7 @@ class FeatureToStringTransformer
         return $types[$type];
     }
 
-    /**
-     * @param string $description
-     *
-     * @return array
-     */
-    private function transformDescription($description)
+    private function transformDescription(string $description): array
     {
         return array_map(function($line) { return '  ' . $line; }, explode(PHP_EOL, $description));
     }
