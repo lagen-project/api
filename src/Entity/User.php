@@ -45,12 +45,12 @@ class User implements UserInterface
         return $this->roles;
     }
 
-    public function setRoles(array $roles = ['ROLE_USER']): void
+    public function setRoles(array $roles = ['ROLE_USER'])
     {
         $this->roles = $roles;
     }
 
-    public function setPassword(string $password): void
+    public function setPassword(string $password)
     {
         $this->password = $password;
     }
@@ -65,7 +65,7 @@ class User implements UserInterface
         return '';
     }
 
-    public function setUsername(string $username): void
+    public function setUsername(string $username)
     {
         $this->username = $username;
     }

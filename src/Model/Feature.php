@@ -44,7 +44,7 @@ class Feature
         return $this->name;
     }
 
-    public function setName(string $name): void
+    public function setName(string $name)
     {
         $this->name = $name;
     }
@@ -54,7 +54,7 @@ class Feature
         return $this->description;
     }
 
-    public function setDescription(string $description): void
+    public function setDescription(string $description)
     {
         $this->description = $description;
     }
@@ -67,7 +67,7 @@ class Feature
         return $this->scenarios;
     }
 
-    public function setScenarios(array $scenarios = []): void
+    public function setScenarios(array $scenarios = [])
     {
         $this->scenarios = $scenarios;
 
@@ -76,13 +76,13 @@ class Feature
         }
     }
 
-    public function addScenario(Scenario $scenario): void
+    public function addScenario(Scenario $scenario)
     {
         $this->scenarios[] = $scenario;
         $scenario->setFeature($this);
     }
 
-    public function removeScenario(Scenario $scenario): void
+    public function removeScenario(Scenario $scenario)
     {
         foreach ($this->scenarios as $id => $s) {
             if ($s->getName() === $scenario->getName()) {

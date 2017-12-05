@@ -126,7 +126,7 @@ class ProjectManager
     /**
      * @throws ProjectNotInstallableException
      */
-    public function installProject(string $projectSlug): void
+    public function installProject(string $projectSlug)
     {
         $projectConfig = $this->retrieveProjectConfig($projectSlug);
         $lagenConfig = $this->retrieveProjectLagenConfig($projectSlug);
@@ -159,7 +159,7 @@ class ProjectManager
         $this->filesystem->symlink($destination, sprintf('%s/%s/job', $this->projectsDir, $projectSlug));
     }
 
-    public function createProject(string $projectName): void
+    public function createProject(string $projectName)
     {
         $this->createRootDirIfNotExists();
         $slug = $this->slugify->slugify($projectName);
@@ -169,7 +169,7 @@ class ProjectManager
         ]);
     }
 
-    public function editProject(string $projectSlug, array $changes): void
+    public function editProject(string $projectSlug, array $changes)
     {
         $config = array_merge(
             $this->retrieveProjectConfig($projectSlug),
@@ -179,7 +179,7 @@ class ProjectManager
         $this->saveProjectConfig($projectSlug, $config);
     }
 
-    private function createRootDirIfNotExists(): void
+    private function createRootDirIfNotExists()
     {
         if (!$this->filesystem->exists($this->projectsDir)) {
             $this->filesystem->mkdir($this->projectsDir);
@@ -208,7 +208,7 @@ class ProjectManager
         return Yaml::parse(file_get_contents($file));
     }
 
-    private function saveProjectConfig(string $projectSlug, array $config): void
+    private function saveProjectConfig(string $projectSlug, array $config)
     {
         file_put_contents(
             sprintf('%s/%s/config.json', $this->projectsDir, $projectSlug),

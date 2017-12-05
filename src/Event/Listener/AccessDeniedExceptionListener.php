@@ -9,7 +9,7 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class AccessDeniedExceptionListener
 {
-    public function onKernelException(GetResponseForExceptionEvent $event): void
+    public function onKernelException(GetResponseForExceptionEvent $event)
     {
         if ($event->getException() instanceof AccessDeniedException) {
             $event->setResponse(new JsonResponse([

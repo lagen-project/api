@@ -97,7 +97,7 @@ class FeatureManager
         return $feature;
     }
 
-    public function createFeature(string $projectSlug, string $featureName): void
+    public function createFeature(string $projectSlug, string $featureName)
     {
         file_put_contents(
             sprintf(
@@ -110,7 +110,7 @@ class FeatureManager
         );
     }
 
-    public function editFeature(string $projectSlug, string $featureSlug, Feature $feature): void
+    public function editFeature(string $projectSlug, string $featureSlug, Feature $feature)
     {
         file_put_contents(
             sprintf(
@@ -130,7 +130,7 @@ class FeatureManager
         );
     }
 
-    public function setFeatureMetadata(string $projectSlug, string $featureSlug, array $metadata): void
+    public function setFeatureMetadata(string $projectSlug, string $featureSlug, array $metadata)
     {
         $this->checkMetadataFile($projectSlug);
         $file = sprintf('%s/%s/features.metadata.json', $this->projectsDir, $projectSlug);
@@ -152,7 +152,7 @@ class FeatureManager
         return isset($metadata[$featureSlug]) ? $metadata[$featureSlug] : null;
     }
 
-    public function checkMetadataFile(string $projectSlug): void
+    public function checkMetadataFile(string $projectSlug)
     {
         $file = sprintf('%s/%s/features.metadata.json', $this->projectsDir, $projectSlug);
         if (!$this->filesystem->exists($file)) {

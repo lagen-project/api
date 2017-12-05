@@ -58,7 +58,7 @@ class StepParameter
         return $this->step;
     }
 
-    public function setStep(Step $step = null): void
+    public function setStep(Step $step = null)
     {
         $this->step = $step;
     }
@@ -66,7 +66,7 @@ class StepParameter
     /**
      * @Serializer\HandlerCallback(direction="deserialization", format="json")
      */
-    public function deserialize(JsonDeserializationVisitor $visitor, array $data): void
+    public function deserialize(JsonDeserializationVisitor $visitor, array $data)
     {
         $this->type = $data['type'];
         $this->value = $data['value'];

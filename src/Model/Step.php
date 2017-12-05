@@ -45,7 +45,7 @@ class Step
         return $this->scenario;
     }
 
-    public function setScenario(Scenario $scenario = null): void
+    public function setScenario(Scenario $scenario = null)
     {
         $this->scenario = $scenario;
     }
@@ -55,7 +55,7 @@ class Step
         return $this->sentence;
     }
 
-    public function setSentence(string $sentence): void
+    public function setSentence(string $sentence)
     {
         $this->sentence = $sentence;
     }
@@ -65,7 +65,7 @@ class Step
         return $this->parameter;
     }
 
-    public function setParameter(StepParameter $parameter): void
+    public function setParameter(StepParameter $parameter)
     {
         $this->parameter = $parameter;
     }
@@ -75,7 +75,7 @@ class Step
         return $this->type;
     }
 
-    public function setType(string $type): void
+    public function setType(string $type)
     {
         $this->type = $type;
     }
