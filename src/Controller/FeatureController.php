@@ -17,7 +17,7 @@ class FeatureController extends Controller
      *
      * @return Response
      */
-    public function getCAction()
+    public function getCollection()
     {
         return $this->handleResponse([]);
     }
@@ -30,7 +30,7 @@ class FeatureController extends Controller
      *
      * @return Response
      */
-    public function getAction($projectSlug, $featureSlug)
+    public function getSingle(string $projectSlug, string $featureSlug)
     {
         return $this->handleResponse(
             $this->get(FeatureManager::class)->getFeature($projectSlug, $featureSlug)
@@ -45,7 +45,7 @@ class FeatureController extends Controller
      *
      * @return Response
      */
-    public function postAction($projectSlug, Request $request)
+    public function post(string $projectSlug, Request $request)
     {
         $requestContent = json_decode($request->getContent(), true);
         $this->get(FeatureManager::class)->createFeature($projectSlug, $requestContent['name']);
@@ -62,7 +62,7 @@ class FeatureController extends Controller
      *
      * @return Response
      */
-    public function putAction($projectSlug, $featureSlug, Request $request)
+    public function put(string $projectSlug, string $featureSlug, Request $request)
     {
         $feature = $this
             ->get('jms_serializer')
@@ -81,7 +81,7 @@ class FeatureController extends Controller
      *
      * @return Response
      */
-    public function exportAction($projectSlug, $featureSlug)
+    public function export(string $projectSlug, string $featureSlug)
     {
         return new Response(
             $this->get(FeatureManager::class)->exportFeature($projectSlug, $featureSlug)
@@ -96,7 +96,7 @@ class FeatureController extends Controller
      *
      * @return Response
      */
-    public function runAction($projectSlug, $featureSlug)
+    public function run(string $projectSlug, string $featureSlug)
     {
         try {
             return $this->handleResponse($this->get(FeatureManager::class)->runFeature($projectSlug, $featureSlug));
@@ -116,7 +116,7 @@ class FeatureController extends Controller
      *
      * @return Response
      */
-    public function getMetadataAction($projectSlug, $featureSlug)
+    public function getMetadata(string $projectSlug, string $featureSlug)
     {
         $metadata = $this
             ->get(FeatureManager::class)
@@ -134,7 +134,7 @@ class FeatureController extends Controller
      *
      * @return JsonResponse
      */
-    public function postMetadataAction($projectSlug, $featureSlug, Request $request)
+    public function postMetadata(string $projectSlug, string $featureSlug, Request $request)
     {
         $this
             ->get(FeatureManager::class)

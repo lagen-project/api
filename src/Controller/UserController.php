@@ -13,7 +13,7 @@ class UserController extends Controller
      *
      * @return JsonResponse
      */
-    public function loginAction()
+    public function login()
     {
         return new JsonResponse();
     }
@@ -23,7 +23,7 @@ class UserController extends Controller
      *
      * @return Response
      */
-    public function meAction()
+    public function me()
     {
         return $this->handleResponse($this->getUser());
     }

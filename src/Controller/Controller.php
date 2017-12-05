@@ -15,7 +15,7 @@ class Controller extends BaseController
      *
      * @return Response
      */
-    protected function handleBasicCollection($className, $where = [], $orderBy = [])
+    protected function handleBasicCollection(string $className, array $where = [], array $orderBy = [])
     {
         $collection = $this
             ->getDoctrine()
@@ -35,7 +35,7 @@ class Controller extends BaseController
      *
      * @return Response
      */
-    protected function handleResponse($object, $statusCode = Response::HTTP_OK, array $groups = [])
+    protected function handleResponse($object, int $statusCode = Response::HTTP_OK, array $groups = [])
     {
         $context = $groups ? SerializationContext::create()->setGroups($groups) : null;
         $serialized = $this->get('jms_serializer')->serialize($object, 'json', $context);
@@ -45,12 +45,12 @@ class Controller extends BaseController
 
     /**
      * @param string $serialized
-     * @param int $ststusCode
+     * @param int $statusCode
      *
      * @return Response
      */
-    protected function handleSerializedResponse($serialized, $ststusCode = Response::HTTP_OK)
+    protected function handleSerializedResponse(string $serialized, int $statusCode = Response::HTTP_OK)
     {
-        return new Response($serialized, $ststusCode, ['Content-type' => 'application/json']);
+        return new Response($serialized, $statusCode, ['Content-type' => 'application/json']);
     }
 }

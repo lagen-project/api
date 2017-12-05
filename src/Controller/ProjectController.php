@@ -18,7 +18,7 @@ class ProjectController extends Controller
      *
      * @return Response
      */
-    public function getCAction()
+    public function getCollection()
     {
         return $this->handleResponse($this->get(ProjectManager::class)->getProjects());
     }
@@ -30,7 +30,7 @@ class ProjectController extends Controller
      *
      * @return Response
      */
-    public function getAction($projectSlug)
+    public function getSingle(string $projectSlug)
     {
         try {
             $project = $this->get(ProjectManager::class)->getProject($projectSlug);
@@ -48,7 +48,7 @@ class ProjectController extends Controller
      *
      * @return Response
      */
-    public function postAction(Request $request)
+    public function post(Request $request)
     {
         $requestContent = json_decode($request->getContent(), true);
         $this->get(ProjectManager::class)->createProject($requestContent['name']);
@@ -64,7 +64,7 @@ class ProjectController extends Controller
      *
      * @return JsonResponse
      */
-    public function putAction($projectSlug, Request $request)
+    public function put(string $projectSlug, Request $request)
     {
         $this->get(ProjectManager::class)->editProject(
             $projectSlug,
@@ -81,7 +81,7 @@ class ProjectController extends Controller
      *
      * @return JsonResponse
      */
-    public function installAction($projectSlug)
+    public function install(string $projectSlug)
     {
         $this->get(ProjectManager::class)->installProject($projectSlug);
 
@@ -95,7 +95,7 @@ class ProjectController extends Controller
      *
      * @return JsonResponse
      */
-    public function gitAction($projectSlug)
+    public function git(string $projectSlug)
     {
         return new JsonResponse($this->get(ProjectManager::class)->retrieveProjectGitInfo($projectSlug));
     }
@@ -107,7 +107,7 @@ class ProjectController extends Controller
      *
      * @return JsonResponse
      */
-    public function stepsAction($projectSlug)
+    public function steps(string $projectSlug)
     {
         return new JsonResponse($this->get(ProjectManager::class)->retrieveSteps($projectSlug));
     }
