@@ -10,6 +10,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class CreateUserCommand extends ContainerAwareCommand
 {
+    /**
+     * {@inheritdoc}
+     */
     protected function configure()
     {
         $this
@@ -21,8 +24,7 @@ class CreateUserCommand extends ContainerAwareCommand
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
+     * {@inheritdoc}
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {

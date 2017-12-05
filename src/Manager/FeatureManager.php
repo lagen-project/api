@@ -210,6 +210,8 @@ class FeatureManager
      * @param string $featureSlug
      *
      * @return array
+     *
+     * @throws FeatureRunErrorException
      */
     public function runFeature($projectSlug, $featureSlug)
     {
