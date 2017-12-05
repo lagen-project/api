@@ -123,7 +123,7 @@ class FeatureParser
         $this->feature->setName(substr($line, 9));
     }
 
-    private function createScenario(string $line, int $type)
+    private function createScenario(string $line, string $type)
     {
         $this->scenario = new Scenario();
         $this->feature->addScenario($this->scenario);
@@ -234,7 +234,7 @@ class FeatureParser
     /**
      * @throws UnrecognizedLineTypeException
      */
-    private function getLineType(string $index, string $line): string
+    private function getLineType(int $index, string $line): string
     {
         if ($line === '') {
             return self::TYPE_BLANK;
@@ -279,6 +279,6 @@ class FeatureParser
             return self::TYPE_DESCRIPTION;
         }
 
-        throw new UnrecognizedLineTypeException;
+        throw new UnrecognizedLineTypeException(sprintf('Unrecognized feature line %d (%s)', $index, $line));
     }
 }
