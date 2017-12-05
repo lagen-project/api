@@ -79,11 +79,13 @@ class ProjectController extends Controller
      *
      * @param string $projectSlug
      *
-     * @return StreamedResponse
+     * @return JsonResponse
      */
     public function installAction($projectSlug)
     {
-        return $this->get(ProjectManager::class)->installProject($projectSlug);
+        $this->get(ProjectManager::class)->installProject($projectSlug);
+
+        return new JsonResponse();
     }
 
     /**

@@ -37,6 +37,7 @@ services:
             - "@filesystem"
             - "%projects_root_dir%"
             - "%deploys_root_dir%"
+            - "%nodes_root_dir%"
             - "@slugify"
             - '@App\Parser\FeatureParser'
             - '@App\Utils\Git'

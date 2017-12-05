@@ -15,9 +15,7 @@ use Cocur\Slugify\Slugify;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
-use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Process\Exception\ProcessFailedException;
-use Symfony\Component\Process\Process;
 use Symfony\Component\Yaml\Yaml;
 
 class ProjectManager
@@ -36,6 +34,11 @@ class ProjectManager
      * @var string
      */
     private $deploysDir;
+
+    /**
+     * @var string
+     */
+    private $nodesDir;
 
     /**
      * @var Slugify
@@ -61,6 +64,7 @@ class ProjectManager
      * @param Filesystem $filesystem
      * @param string $projectsDir
      * @param string $deploysDir
+     * @param string $nodesDir
      * @param Slugify $slugify
      * @param FeatureParser $featureParser
      * @param Git $git
@@ -68,8 +72,9 @@ class ProjectManager
      */
     public function __construct(
         Filesystem $filesystem,
-        $projectsDir,
-        $deploysDir,
+        string $projectsDir,
+        string $deploysDir,
+        string $nodesDir,
         Slugify $slugify,
         FeatureParser $featureParser,
         Git $git,
@@ -78,6 +83,7 @@ class ProjectManager
         $this->filesystem = $filesystem;
         $this->projectsDir = $projectsDir;
         $this->deploysDir = $deploysDir;
+        $this->nodesDir = $nodesDir;
         $this->slugify = $slugify;
         $this->featureParser = $featureParser;
         $this->git = $git;
@@ -137,51 +143,38 @@ class ProjectManager
     /**
      * @param string $projectSlug
      *
-     * @return StreamedResponse
-     *
-     * @throws ProcessFailedException
      * @throws ProjectNotInstallableException
      */
     public function installProject($projectSlug)
     {
         $projectConfig = $this->retrieveProjectConfig($projectSlug);
-
-        if (!isset($projectConfig['gitRepository'])) {
-            return null;
-        }
-
-        $this->git->cloneRepository($projectConfig['gitRepository'], $projectSlug);
-
-        if (isset($projectConfig['gitBranch'])) {
-            $this->git->changeBranch($projectConfig['gitBranch'], $projectSlug);
-        }
-
         $lagenConfig = $this->retrieveProjectLagenConfig($projectSlug);
-        if (!isset($lagenConfig['install'])) {
+
+        if (!isset($projectConfig['gitRepository']) || !isset($lagenConfig['install'])) {
             throw new ProjectNotInstallableException();
         }
 
-        $response = new StreamedResponse();
-        $response->headers->add(['Content-type' => 'application/json']);
-        $installCmd = sprintf(
-            'cd %s/%s && %s',
-            $this->deploysDir,
-            $projectSlug,
-            is_array($lagenConfig['install']) ? implode(' && ', $lagenConfig['install']) : $lagenConfig['install']
-        );
-        $this->logger->info(sprintf('Now running install command : %s', $installCmd));
-        $process = new Process($installCmd);
-        $process->setTimeout(0);
-        $process->start();
-        $response->setCallback(function () use ($process) {
-            $process->wait(function ($type, $buffer) {
-                echo $buffer;
-                flush();
-                ob_flush();
-            });
-        });
+        if (!$this->filesystem->exists($this->nodesDir)) {
+            $this->filesystem->mkdir($this->nodesDir);
+        }
 
-        return $response;
+        $destination = sprintf(
+            '%s/pending/%s',
+            $this->nodesDir,
+            \DateTime::createFromFormat('U.u', microtime(true))->format('YmdHisu')
+        );
+
+        file_put_contents(
+            $destination,
+            json_encode([
+                'project' => $projectSlug,
+                'commands' => $lagenConfig['install'],
+                'repository' => $projectConfig['gitRepository'],
+                'branch' => isset($projectConfig['gitBranch']) ? $projectConfig['gitBranch'] : null
+            ], JSON_PRETTY_PRINT)
+        );
+
+        $this->filesystem->symlink($destination, sprintf('%s/%s/job', $this->projectsDir, $projectSlug));
     }
 
     /**
