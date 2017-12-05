@@ -170,7 +170,8 @@ class ProjectManager
                 'project' => $projectSlug,
                 'commands' => $lagenConfig['install'],
                 'repository' => $projectConfig['gitRepository'],
-                'branch' => isset($projectConfig['gitBranch']) ? $projectConfig['gitBranch'] : null
+                'branch' => isset($projectConfig['gitBranch']) ? $projectConfig['gitBranch'] : null,
+                'status' => 'pending'
             ], JSON_PRETTY_PRINT)
         );
 
