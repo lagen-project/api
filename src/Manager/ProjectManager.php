@@ -135,9 +135,7 @@ class ProjectManager
             throw new ProjectNotInstallableException();
         }
 
-        if (!$this->filesystem->exists($this->nodesDir)) {
-            $this->filesystem->mkdir($this->nodesDir);
-        }
+        $this->createNodesDirsIfNotExists();
 
         $destination = sprintf(
             '%s/pending/%s',
@@ -157,6 +155,22 @@ class ProjectManager
         );
 
         $this->filesystem->symlink($destination, sprintf('%s/%s/job', $this->projectsDir, $projectSlug));
+    }
+
+    public function getProjectInstallStatus(string $projectSlug): array
+    {
+        $jobFilename = sprintf('%s/job', $this->getProjectDirectory($projectSlug));
+
+        if (!$this->filesystem->exists($jobFilename)) {
+            return [
+                'status' => 'none'
+            ];
+        }
+
+        return array_intersect_key(
+            json_decode(file_get_contents($jobFilename), true),
+            array_flip(['status', 'result'])
+        );
     }
 
     public function createProject(string $projectName)
@@ -269,5 +283,15 @@ class ProjectManager
     private function checkProjectAndRetrieveFeaturesFinder(string $projectSlug): Finder
     {
         return $this->getFeaturesFinder($this->getProjectDirectory($projectSlug));
+    }
+
+    private function createNodesDirsIfNotExists()
+    {
+        if (!$this->filesystem->exists($this->nodesDir)) {
+            $this->filesystem->mkdir($this->nodesDir);
+            $this->filesystem->mkdir(sprintf('%s/pending', $this->nodesDir));
+            $this->filesystem->mkdir(sprintf('%s/ongoing', $this->nodesDir));
+            $this->filesystem->mkdir(sprintf('%s/done', $this->nodesDir));
+        }
     }
 }

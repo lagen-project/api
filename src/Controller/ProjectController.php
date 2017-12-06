@@ -84,4 +84,12 @@ class ProjectController extends Controller
     {
         return new JsonResponse($this->get(ProjectManager::class)->retrieveSteps($projectSlug));
     }
+
+    /**
+     * @Route("/projects/{projectSlug}/install-status", methods={"GET"})
+     */
+    public function installStatus(string $projectSlug): JsonResponse
+    {
+        return new JsonResponse($this->get(ProjectManager::class)->getProjectInstallStatus($projectSlug));
+    }
 }
