@@ -143,7 +143,7 @@ class ProjectManager
             \DateTime::createFromFormat('U.u', microtime(true))->format('YmdHisu')
         );
 
-        file_put_contents(
+        $this->filesystem->dumpFile(
             $destination,
             json_encode([
                 'project' => $projectSlug,
@@ -153,8 +153,13 @@ class ProjectManager
                 'status' => 'pending'
             ], JSON_PRETTY_PRINT)
         );
-
-        $this->filesystem->symlink($destination, sprintf('%s/%s/job', $this->projectsDir, $projectSlug));
+        $this->filesystem->dumpFile(
+            sprintf('%s/%s/job', $this->projectsDir, $projectSlug),
+            json_encode([
+                'status' => 'pending',
+                'result' => ''
+            ])
+        );
     }
 
     public function getProjectInstallStatus(string $projectSlug): array

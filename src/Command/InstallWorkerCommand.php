@@ -12,6 +12,11 @@ use Symfony\Component\Process\Process;
 
 class InstallWorkerCommand extends ContainerAwareCommand
 {
+    /**
+     * @var Filesystem
+     */
+    private $fs;
+
     protected function configure()
     {
         $this
@@ -24,15 +29,15 @@ class InstallWorkerCommand extends ContainerAwareCommand
     {
         $output->writeln('Install worker launched. Waiting for jobs to process... :)');
 
-        $fs = new Filesystem();
+        $this->fs = new Filesystem();
         $git = $this->getContainer()->get(Git::class);
         $nodesDir = $this->getContainer()->getParameter('nodes_root_dir');
 
-        if (!$fs->exists($nodesDir)) {
-            $fs->mkdir($nodesDir);
-            $fs->mkdir(sprintf('%s/pending', $nodesDir));
-            $fs->mkdir(sprintf('%s/ongoing', $nodesDir));
-            $fs->mkdir(sprintf('%s/done', $nodesDir));
+        if (!$this->fs->exists($nodesDir)) {
+            $this->fs->mkdir($nodesDir);
+            $this->fs->mkdir(sprintf('%s/pending', $nodesDir));
+            $this->fs->mkdir(sprintf('%s/ongoing', $nodesDir));
+            $this->fs->mkdir(sprintf('%s/done', $nodesDir));
         }
 
         while (true) {
@@ -48,14 +53,11 @@ class InstallWorkerCommand extends ContainerAwareCommand
             $ongoingPathname = preg_replace('|^(.+)/pending/([^/]+)$|', '$1/ongoing/$2', $file->getPathname());
             $donePathname = preg_replace('|^(.+)/ongoing/([^/]+)$|', '$1/done/$2', $ongoingPathname);
             $deployDir = sprintf('%s/%s', $this->getContainer()->getParameter('deploys_root_dir'), $content['project']);
-            $projectDir = sprintf(
-                '%s/%s', $this->getContainer()->getParameter('projects_root_dir'), $content['project']
-            );
 
             $content['status'] = 'ongoing';
             $this->rewriteFile($file->getPathname(), $content);
-            $fs->rename($file->getPathname(), $ongoingPathname);
-            $fs->symlink($ongoingPathname, sprintf('%s/job', $projectDir));
+            $this->fs->rename($file->getPathname(), $ongoingPathname);
+            $this->changeProjectStatusFile($content);
 
             $git->cloneRepository($content['repository'], $content['project']);
             if (isset($content['branch'])) {
@@ -74,23 +76,32 @@ class InstallWorkerCommand extends ContainerAwareCommand
                 $process->wait(function ($type, $buffer) use (&$content, $ongoingPathname) {
                     $content['result'] .= $buffer;
                     $this->rewriteFile($ongoingPathname, $content);
+                    $this->changeProjectStatusFile($content);
                     echo $buffer;
                 });
             }
 
             $content['status'] = 'done';
             $this->rewriteFile($ongoingPathname, $content);
-            $fs->rename($ongoingPathname, $donePathname);
-            $fs->symlink($donePathname, sprintf('%s/job', $projectDir));
+            $this->fs->rename($ongoingPathname, $donePathname);
+            $this->changeProjectStatusFile($content);
         }
     }
 
-    /**
-     * @param string $destination
-     * @param array $content
-     */
     private function rewriteFile(string $destination, array $content)
     {
-        file_put_contents($destination, json_encode($content, JSON_PRETTY_PRINT));
+        $this->fs->dumpFile($destination, json_encode($content, JSON_PRETTY_PRINT));
+    }
+
+    private function changeProjectStatusFile(array $content)
+    {
+        $projectStatusFilename = sprintf(
+            '%s/%s/job', $this->getContainer()->getParameter('projects_root_dir'), $content['project']
+        );
+
+        $this->fs->dumpFile($projectStatusFilename, json_encode([
+            'status' => $content['status'],
+            'result' => isset($content['result']) ? $content['result'] : ''
+        ], JSON_PRETTY_PRINT));
     }
 }
