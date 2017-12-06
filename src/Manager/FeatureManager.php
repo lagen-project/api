@@ -9,6 +9,7 @@ use App\Parser\FeatureParser;
 use App\Parser\TestResultParser;
 use App\Transformer\FeatureToStringTransformer;
 use Cocur\Slugify\Slugify;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Process\Process;
 
@@ -54,6 +55,11 @@ class FeatureManager
      */
     private $testResultParser;
 
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
     public function __construct(
         Filesystem $filesystem,
         string $deploysDir,
@@ -62,7 +68,8 @@ class FeatureManager
         FeatureParser $featureParser,
         FeatureToStringTransformer $featureToStringTransformer,
         ProjectManager $projectManager,
-        TestResultParser $testResultParser
+        TestResultParser $testResultParser,
+        LoggerInterface $logger
     ) {
         $this->filesystem = $filesystem;
         $this->deploysDir = $deploysDir;
@@ -72,6 +79,7 @@ class FeatureManager
         $this->featureToStringTransformer = $featureToStringTransformer;
         $this->projectManager = $projectManager;
         $this->testResultParser = $testResultParser;
+        $this->logger = $logger;
     }
 
     public function getFeature(string $projectSlug, string $featureSlug): Feature
@@ -211,6 +219,8 @@ class FeatureManager
         if ($process->getErrorOutput() !== '') {
             throw new FeatureRunErrorException($process->getErrorOutput());
         }
+
+        $this->logger->info($process->getOutput());
 
         return $this->testResultParser->parse($process->getOutput(), $feature);
     }

@@ -54,6 +54,7 @@ services:
             - '@App\Transformer\FeatureToStringTransformer'
             - '@App\Manager\ProjectManager'
             - '@App\Parser\TestResultParser'
+            - '@logger'
 
     App\Utils\Git:
         public: true

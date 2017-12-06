@@ -6,12 +6,11 @@ server:
 project_slug: lagen-api
 root_dir: features
 install:
-    - "sed -i.bk s:APP_ENV=dev:APP_ENV=test: .env.dist && sed -i.bk s:var/data/data.sqlite:tests/data/data.sqlite: .env.dist && rm .env.dist.bk"
     - "composer install -vvv"
     - "mkdir -p tests/data tests/config/jwt"
-    - "echo '#!/usr/bin/env php\n<?php\nunset($_SERVER[\"APP_ENV\"]);' > /tmp/out && tail -n37 bin/console >> /tmp/out && mv /tmp/out bin/console && chmod +x bin/console"
+    - "export APP_ENV=test && DATABASE_PATH=tests/data/data.sqlite"
     - "php bin/console doctrine:database:create --env=test"
     - "php bin/console doctrine:schema:update --force --env=test"
     - "openssl genrsa -out tests/config/jwt/private.pem -passout pass:lagen"
     - "openssl rsa -pubout -in tests/config/jwt/private.pem -out tests/config/jwt/public.pem -passin pass:lagen"
-test: "./vendor/bin/behat --format=progress"
+test: "export APP_ENV=test && DATABASE_PATH=tests/data/data.sqlite && ./vendor/bin/behat --format=progress"
