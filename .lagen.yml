@@ -6,11 +6,21 @@ server:
 project_slug: lagen-api
 root_dir: features
 install:
-    - "composer install -vvv"
-    - "mkdir -p tests/data tests/config/jwt"
-    - "export APP_ENV=test && export DATABASE_PATH=tests/data/data.sqlite"
-    - "php bin/console doctrine:database:create --env=test"
-    - "php bin/console doctrine:schema:update --force --env=test"
-    - "openssl genrsa -out tests/config/jwt/private.pem -passout pass:lagen"
-    - "openssl rsa -pubout -in tests/config/jwt/private.pem -out tests/config/jwt/public.pem -passin pass:lagen"
-test: "export APP_ENV=test && export DATABASE_PATH=tests/data/data.sqlite && ./vendor/bin/behat --format=progress"
+    image: "php:7.2-cli-alpine3.6"
+    env:
+        APP_ENV: "test"
+        APP_SECRET: "secret"
+        DATABASE_PATH: "tests/data/data.sqlite"
+        JWT_PRIVATE_KEY_PATH: "tests/config/jwt/private.pem"
+        JWT_PUBLIC_KEY_PATH: "tests/config/jwt/public.pem"
+        JWT_PASSPHRASE: "lagen"
+        MAILER_URL: "null://localhost"
+        ALLOWED_ORIGINS: ""
+    commands:
+        - "composer install"
+        - "mkdir -p tests/data tests/config/jwt"
+        - "php bin/console doctrine:database:create --env=test"
+        - "php bin/console doctrine:schema:update --force --env=test"
+        - "openssl genrsa -out tests/config/jwt/private.pem -passout pass:lagen"
+        - "openssl rsa -pubout -in tests/config/jwt/private.pem -out tests/config/jwt/public.pem -passin pass:lagen"
+test: "./vendor/bin/behat --format=progress"

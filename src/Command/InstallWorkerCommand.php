@@ -2,6 +2,8 @@
 
 namespace App\Command;
 
+use App\Parser\ProjectConfigParser;
+use App\Transformer\ProjectConfigToDockerfileTransformer;
 use App\Utils\Git;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
@@ -32,6 +34,8 @@ class InstallWorkerCommand extends ContainerAwareCommand
         $this->fs = new Filesystem();
         $git = $this->getContainer()->get(Git::class);
         $nodesDir = $this->getContainer()->getParameter('nodes_root_dir');
+        $projectConfigParser = $this->getContainer()->get(ProjectConfigParser::class);
+        $configToDockerfileTransformer = $this->getContainer()->get(ProjectConfigToDockerfileTransformer::class);
 
         if (!$this->fs->exists($nodesDir)) {
             $this->fs->mkdir($nodesDir);
@@ -64,10 +68,14 @@ class InstallWorkerCommand extends ContainerAwareCommand
                 $git->changeBranch($content['branch'], $content['project']);
             }
 
+            $projectConfig = $projectConfigParser->parse($content['project']);
+            $configToDockerfileTransformer->transform($projectConfig, $content['project']);
+
             if (!isset($content['result'])) {
                 $content['result'] = '';
             }
 
+            /*
             foreach ($content['commands'] as $cmd) {
                 $process = new Process($cmd, $deployDir);
                 $process->setTimeout(0);
@@ -80,6 +88,7 @@ class InstallWorkerCommand extends ContainerAwareCommand
                     echo $buffer;
                 });
             }
+            */
 
             $content['status'] = 'done';
             $this->rewriteFile($ongoingPathname, $content);

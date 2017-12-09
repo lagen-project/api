@@ -31,18 +31,6 @@ services:
         arguments:
             - "%env(ALLOWED_ORIGINS)%"
 
-    App\Manager\ProjectManager:
-        public: true
-        arguments:
-            - "@filesystem"
-            - "%projects_root_dir%"
-            - "%deploys_root_dir%"
-            - "%nodes_root_dir%"
-            - "@slugify"
-            - '@App\Parser\FeatureParser'
-            - '@App\Utils\Git'
-            - '@logger'
-
     App\Manager\FeatureManager:
         public: true
         arguments:
@@ -55,6 +43,30 @@ services:
             - '@App\Manager\ProjectManager'
             - '@App\Parser\TestResultParser'
             - '@logger'
+
+    App\Manager\ProjectManager:
+        public: true
+        arguments:
+            - "@filesystem"
+            - "%projects_root_dir%"
+            - "%deploys_root_dir%"
+            - "%nodes_root_dir%"
+            - "@slugify"
+            - '@App\Parser\FeatureParser'
+            - '@App\Utils\Git'
+            - '@logger'
+
+    App\Parser\ProjectConfigParser:
+        public: true
+        arguments:
+            - "@filesystem"
+            - "%deploys_root_dir%"
+
+    App\Transformer\ProjectConfigToDockerfileTransformer:
+        public: true
+        arguments:
+            - "@filesystem"
+            - "%deploys_root_dir%"
 
     App\Utils\Git:
         public: true

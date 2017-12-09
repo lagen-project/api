@@ -129,9 +129,8 @@ class ProjectManager
     public function installProject(string $projectSlug)
     {
         $projectConfig = $this->retrieveProjectConfig($projectSlug);
-        $lagenConfig = $this->retrieveProjectLagenConfig($projectSlug);
 
-        if (!isset($projectConfig['gitRepository']) || !isset($lagenConfig['install'])) {
+        if (!isset($projectConfig['gitRepository'])) {
             throw new ProjectNotInstallableException();
         }
 
@@ -147,7 +146,6 @@ class ProjectManager
             $destination,
             json_encode([
                 'project' => $projectSlug,
-                'commands' => $lagenConfig['install'],
                 'repository' => $projectConfig['gitRepository'],
                 'branch' => isset($projectConfig['gitBranch']) ? $projectConfig['gitBranch'] : null,
                 'status' => 'pending'
