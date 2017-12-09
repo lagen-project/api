@@ -17,6 +17,7 @@ install:
         MAILER_URL: "null://localhost"
         ALLOWED_ORIGINS: ""
     commands:
+        - "curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer"
         - "composer install"
         - "mkdir -p tests/data tests/config/jwt"
         - "php bin/console doctrine:database:create --env=test"

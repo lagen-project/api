@@ -75,20 +75,16 @@ class InstallWorkerCommand extends ContainerAwareCommand
                 $content['result'] = '';
             }
 
-            /*
-            foreach ($content['commands'] as $cmd) {
-                $process = new Process($cmd, $deployDir);
-                $process->setTimeout(0);
-                $process->start();
-                $output->writeln(sprintf('<fg=yellow>%s</>', $process->getCommandLine()));
-                $process->wait(function ($type, $buffer) use (&$content, $ongoingPathname) {
-                    $content['result'] .= $buffer;
-                    $this->rewriteFile($ongoingPathname, $content);
-                    $this->changeProjectStatusFile($content);
-                    echo $buffer;
-                });
-            }
-            */
+            $process = new Process(sprintf('docker build -t %s .', $content['project']), $deployDir);
+            $process->setTimeout(0);
+            $process->start();
+            $output->writeln(sprintf('<fg=yellow>%s</>', $process->getCommandLine()));
+            $process->wait(function ($type, $buffer) use (&$content, $ongoingPathname) {
+                $content['result'] .= $buffer;
+                $this->rewriteFile($ongoingPathname, $content);
+                $this->changeProjectStatusFile($content);
+                echo $buffer;
+            });
 
             $content['status'] = 'done';
             $this->rewriteFile($ongoingPathname, $content);

@@ -27,7 +27,7 @@ class ProjectConfigToDockerfileTransformer
     {
         $content = [
             sprintf(
-                'FROM: %s', $projectConfig->getImage()
+                'FROM %s', $projectConfig->getImage()
             ),
             'WORKDIR /app',
             'ADD . /app'
@@ -40,9 +40,9 @@ class ProjectConfigToDockerfileTransformer
             return sprintf('RUN %s', $command);
         }, $projectConfig->getCommands()));
 
-        $this->filesystem->dumpFile(
+        file_put_contents(
             sprintf('%s/%s/Dockerfile', $this->deployDir, $projectSlug),
-            implode('\n', $content)
+            implode(PHP_EOL, $content)
         );
     }
 }
