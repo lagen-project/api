@@ -22,7 +22,7 @@ class InstallWorkerCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-            ->setName('app:install-worker')
+            ->setName('app:worker:install')
             ->setDescription('Worker that listens to installation requests and processes them.')
         ;
     }

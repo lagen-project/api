@@ -13,7 +13,7 @@ class CreateUserCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-            ->setName('app:create-user')
+            ->setName('app:user:create')
             ->setDescription('Creates a new user.')
             ->addArgument('username', InputArgument::REQUIRED, 'The username of the user.')
             ->addArgument('password', InputArgument::REQUIRED, 'The password of the user.')
