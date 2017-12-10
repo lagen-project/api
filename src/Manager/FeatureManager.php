@@ -177,40 +177,30 @@ class FeatureManager
         $testCmd = $this->projectManager->retrieveProjectLagenConfig($projectSlug)['test'];
         $featureMetadata = $this->getFeatureMetadata($projectSlug, $featureSlug);
 
-        $move = file_exists(sprintf(
-            '%s/%s/%s/%s',
-            $this->deploysDir,
-            $projectSlug,
-            $featureMetadata['dir'],
-            $featureMetadata['filename'])
-        );
-
         $cmd = sprintf(
-            'cd %s/%s %s && cp %s/%s/%s %s/%s && %s %s/%s; %s',
+            <<<CMD
+cd %s/%s && \
+docker run --name=%s -d %s tail -f /dev/null && \
+docker cp %s/%s/%s %s:/app/%s/%s && \
+docker exec %s %s \
+docker stop %s \
+docker container rm %s
+CMD
+            ,
             $this->deploysDir,
             $projectSlug,
-            $move ? sprintf(
-                '&& mv %s/%s %s/%s.backup',
-                $featureMetadata['dir'],
-                $featureMetadata['filename'],
-                $featureMetadata['dir'],
-                $featureMetadata['filename']
-            ) : '',
+            $projectSlug,
+            $projectSlug,
             $this->projectsDir,
             $projectSlug,
             $featureSlug,
+            $projectSlug,
             $featureMetadata['dir'],
             $featureMetadata['filename'],
+            $projectSlug,
             $testCmd,
-            $featureMetadata['dir'],
-            $featureMetadata['filename'],
-            $move ? sprintf(
-                'mv %s/%s.backup %s/%s',
-                $featureMetadata['dir'],
-                $featureMetadata['filename'],
-                $featureMetadata['dir'],
-                $featureMetadata['filename']
-            ) : ''
+            $projectSlug,
+            $projectSlug
         );
 
         $process = new Process($cmd);

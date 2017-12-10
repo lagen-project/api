@@ -75,7 +75,10 @@ class InstallWorkerCommand extends ContainerAwareCommand
                 $content['result'] = '';
             }
 
-            $process = new Process(sprintf('docker build -t %s .', $content['project']), $deployDir);
+            $process = new Process(sprintf(
+                'docker build -t %s .',
+                $content['project']
+            ), $deployDir);
             $process->setTimeout(0);
             $process->start();
             $output->writeln(sprintf('<fg=yellow>%s</>', $process->getCommandLine()));

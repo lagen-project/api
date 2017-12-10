@@ -33,12 +33,13 @@ class ProjectConfigToDockerfileTransformer
             'ADD . /app'
         ];
 
+        $commands = [];
         foreach ($projectConfig->getEnv() as $key => $value) {
-            $content[] = sprintf('RUN export %s=%s', $key, $value);
+            $commands[] = sprintf('export %s=%s', $key, $value);
         }
-        $content = array_merge($content, array_map(function(string $command) {
-            return sprintf('RUN %s', $command);
-        }, $projectConfig->getCommands()));
+        $commands = array_merge($commands, $projectConfig->getCommands());
+
+        $content[] = sprintf('RUN %s', implode(sprintf(' && \%s', PHP_EOL), $commands));
 
         file_put_contents(
             sprintf('%s/%s/Dockerfile', $this->deployDir, $projectSlug),
