@@ -83,7 +83,8 @@ class InstallWorkerCommand extends ContainerAwareCommand
             $process->start();
             $output->writeln(sprintf('<fg=yellow>%s</>', $process->getCommandLine()));
             $process->wait(function ($type, $buffer) use (&$content, $ongoingPathname) {
-                $content['result'] .= $buffer;
+                $content['result'] .= preg_replace('/[\x00-\x09\x0B\x0C\x0E-\x1F\x7F]/', '', $buffer);
+                $content['result'] = preg_replace('/\[0m\[\d+m/', "\n", $content['result']);
                 $this->rewriteFile($ongoingPathname, $content);
                 $this->changeProjectStatusFile($content);
                 echo $buffer;

@@ -179,11 +179,11 @@ class FeatureManager
 
         $cmd = sprintf(
             <<<CMD
-cd %s/%s && \
-docker run --name=%s -d %s tail -f /dev/null && \
-docker cp %s/%s/%s %s:/app/%s/%s && \
-docker exec %s %s \
-docker stop %s \
+cd %s/%s &&
+docker run --name=%s -d %s tail -f /dev/null &&
+docker cp %s/%s/%s %s:/app/%s/%s &&
+docker exec %s %s;
+docker stop %s &&
 docker container rm %s
 CMD
             ,
@@ -203,6 +203,8 @@ CMD
             $projectSlug
         );
 
+        $this->logger->info($cmd);
+
         $process = new Process($cmd);
         $process->run();
 
@@ -212,6 +214,11 @@ CMD
 
         $this->logger->info($process->getOutput());
 
-        return $this->testResultParser->parse($process->getOutput(), $feature);
+        $explodedOutput = explode(PHP_EOL, $process->getOutput());
+        if (count($explodedOutput) >= 2) {
+            return $this->testResultParser->parse($explodedOutput[1], $feature);
+        }
+
+        throw new FeatureRunErrorException($process->getOutput());
     }
 }

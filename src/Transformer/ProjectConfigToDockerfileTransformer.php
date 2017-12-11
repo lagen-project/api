@@ -34,7 +34,7 @@ class ProjectConfigToDockerfileTransformer
         ];
 
         foreach ($projectConfig->getEnv() as $key => $value) {
-            $content[] = sprintf('ENV %s %s', $key, $value);
+            $content[] = sprintf('ENV %s %s', $key, $value ? : '""');
         }
 
         $content = array_merge($content, array_map(function($command) {
