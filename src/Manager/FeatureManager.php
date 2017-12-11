@@ -157,7 +157,7 @@ class FeatureManager
         $content = file_get_contents(sprintf('%s/%s/features.metadata.json', $this->projectsDir, $projectSlug));
         $metadata = json_decode($content, true);
 
-        return isset($metadata[$featureSlug]) ? $metadata[$featureSlug] : null;
+        return isset($metadata[$featureSlug]) ? $metadata[$featureSlug] : [];
     }
 
     public function checkMetadataFile(string $projectSlug)
