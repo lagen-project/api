@@ -238,9 +238,9 @@ class ProjectManager
         try {
             return $this->git->getLastCommitInfo($projectSlug);
         } catch (ProcessFailedException $e) {
-            return null;
+            return [];
         } catch (ProjectNotInstalledException $e) {
-            return null;
+            return [];
         }
     }
 
