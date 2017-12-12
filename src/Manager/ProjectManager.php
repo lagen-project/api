@@ -211,20 +211,6 @@ class ProjectManager
         );
     }
 
-    /**
-     * @throws ProjectConfigurationNotFoundException
-     */
-    public function retrieveProjectLagenConfig(string $projectSlug): array
-    {
-        $file = sprintf('%s/%s/.lagen.yml', $this->deploysDir, $projectSlug);
-
-        if (!$this->filesystem->exists($file)) {
-            throw new ProjectConfigurationNotFoundException();
-        }
-
-        return Yaml::parse(file_get_contents($file));
-    }
-
     private function saveProjectConfig(string $projectSlug, array $config)
     {
         file_put_contents(

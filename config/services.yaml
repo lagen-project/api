@@ -40,8 +40,8 @@ services:
             - "@slugify"
             - '@App\Parser\FeatureParser'
             - '@App\Transformer\FeatureToStringTransformer'
-            - '@App\Manager\ProjectManager'
             - '@App\Parser\TestResultParser'
+            - '@App\Parser\ProjectConfigParser'
             - '@logger'
 
     App\Manager\ProjectManager:

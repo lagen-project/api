@@ -2,7 +2,7 @@
 
 namespace App\Parser;
 
-use App\Exception\ProjectNotInstallableException;
+use App\Exception\ProjectConfigurationNotFoundException;
 use App\Model\ProjectConfig;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Yaml\Yaml;
@@ -26,14 +26,14 @@ class ProjectConfigParser
     }
 
     /**
-     * @throws ProjectNotInstallableException
+     * @throws ProjectConfigurationNotFoundException
      */
     public function parse(string $projectSlug): ProjectConfig
     {
         $fileName = sprintf('%s/%s/.lagen.yml', $this->deploysDir, $projectSlug);
 
         if (!$this->filesystem->exists($fileName)) {
-            throw new ProjectNotInstallableException();
+            throw new ProjectConfigurationNotFoundException();
         }
 
         return new ProjectConfig(Yaml::parse(file_get_contents($fileName)));

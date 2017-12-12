@@ -6,6 +6,7 @@ use App\Exception\FeatureRunErrorException;
 use App\Exception\ProjectConfigurationNotFoundException;
 use App\Model\Feature;
 use App\Parser\FeatureParser;
+use App\Parser\ProjectConfigParser;
 use App\Parser\TestResultParser;
 use App\Transformer\FeatureToStringTransformer;
 use Cocur\Slugify\Slugify;
@@ -46,14 +47,14 @@ class FeatureManager
     private $featureToStringTransformer;
 
     /**
-     * @var ProjectManager
-     */
-    private $projectManager;
-
-    /**
      * @var TestResultParser
      */
     private $testResultParser;
+
+    /**
+     * @var ProjectConfigParser
+     */
+    private $projectConfigParser;
 
     /**
      * @var LoggerInterface
@@ -67,8 +68,8 @@ class FeatureManager
         Slugify $slugify,
         FeatureParser $featureParser,
         FeatureToStringTransformer $featureToStringTransformer,
-        ProjectManager $projectManager,
         TestResultParser $testResultParser,
+        ProjectConfigParser $projectConfigParser,
         LoggerInterface $logger
     ) {
         $this->filesystem = $filesystem;
@@ -77,8 +78,8 @@ class FeatureManager
         $this->slugify = $slugify;
         $this->featureParser = $featureParser;
         $this->featureToStringTransformer = $featureToStringTransformer;
-        $this->projectManager = $projectManager;
         $this->testResultParser = $testResultParser;
+        $this->projectConfigParser = $projectConfigParser;
         $this->logger = $logger;
     }
 
@@ -91,7 +92,7 @@ class FeatureManager
         $deployDirExists = $this->filesystem->exists(sprintf('%s/%s', $this->deploysDir, $projectSlug));
         $featureMetadata = $this->getFeatureMetadata($projectSlug, $featureSlug);
         try {
-            $lagenConfig = $this->projectManager->retrieveProjectLagenConfig($projectSlug);
+            $lagenConfig = $this->projectConfigParser->parse($projectSlug);
         } catch (ProjectConfigurationNotFoundException $e) {
             $lagenConfig = null;
         }
@@ -99,7 +100,7 @@ class FeatureManager
             $deployDirExists &&
             !empty($featureMetadata) &&
             !empty($lagenConfig) &&
-            isset($lagenConfig['test'])
+            !empty($lagenConfig->getTestCommand())
         );
 
         return $feature;
