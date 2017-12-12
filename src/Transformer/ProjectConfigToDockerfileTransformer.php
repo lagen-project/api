@@ -41,7 +41,7 @@ class ProjectConfigToDockerfileTransformer
             return sprintf('RUN %s', $command);
         }, $projectConfig->getCommands()));
 
-        file_put_contents(
+        $this->filesystem->dumpFile(
             sprintf('%s/%s/Dockerfile', $this->deployDir, $projectSlug),
             implode(PHP_EOL, $content)
         );

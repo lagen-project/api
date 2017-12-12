@@ -4,7 +4,6 @@ namespace App\Manager;
 
 use App\Exception\ProjectNotFoundException;
 use App\Exception\ProjectNotInstallableException;
-use App\Exception\ProjectConfigurationNotFoundException;
 use App\Exception\ProjectNotInstalledException;
 use App\Model\Scenario;
 use App\Model\Step;
@@ -213,7 +212,7 @@ class ProjectManager
 
     private function saveProjectConfig(string $projectSlug, array $config)
     {
-        file_put_contents(
+        $this->filesystem->dumpFile(
             sprintf('%s/%s/config.json', $this->projectsDir, $projectSlug),
             json_encode($config, JSON_PRETTY_PRINT)
         );
