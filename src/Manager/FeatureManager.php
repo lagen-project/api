@@ -175,7 +175,7 @@ class FeatureManager
     public function runFeature(string $projectSlug, string $featureSlug): array
     {
         $feature = $this->getFeature($projectSlug, $featureSlug);
-        $testCmd = $this->projectManager->retrieveProjectLagenConfig($projectSlug)['test'];
+        $testCmd = $this->projectConfigParser->parse($projectSlug)->getTestCommand();
         $featureMetadata = $this->getFeatureMetadata($projectSlug, $featureSlug);
 
         $cmd = sprintf(
@@ -183,7 +183,7 @@ class FeatureManager
 cd %s/%s &&
 docker run --name=%s -d %s tail -f /dev/null &&
 docker cp %s/%s/%s %s:/app/%s/%s &&
-docker exec %s %s;
+docker exec %s %s %s/%s;
 docker stop %s &&
 docker container rm %s
 CMD
@@ -200,6 +200,8 @@ CMD
             $featureMetadata['filename'],
             $projectSlug,
             $testCmd,
+            $featureMetadata['dir'],
+            $featureMetadata['filename'],
             $projectSlug,
             $projectSlug
         );
