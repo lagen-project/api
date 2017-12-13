@@ -42,7 +42,10 @@ class InstallWorkerCommand extends ContainerAwareCommand
             $this->fs->mkdir(sprintf('%s/pending', $nodesDir));
             $this->fs->mkdir(sprintf('%s/ongoing', $nodesDir));
             $this->fs->mkdir(sprintf('%s/done', $nodesDir));
+            $this->fs->mkdir(sprintf('%s/failed', $nodesDir));
         }
+
+        $this->setOngoingToFailed($nodesDir);
 
         while (true) {
             $files = iterator_to_array((new Finder())->files()->in(sprintf('%s/pending', $nodesDir))->sortByName());
@@ -56,6 +59,7 @@ class InstallWorkerCommand extends ContainerAwareCommand
             $content = json_decode(file_get_contents($file->getPathname()), true);
             $ongoingPathname = preg_replace('|^(.+)/pending/([^/]+)$|', '$1/ongoing/$2', $file->getPathname());
             $donePathname = preg_replace('|^(.+)/ongoing/([^/]+)$|', '$1/done/$2', $ongoingPathname);
+            $failedPathname = preg_replace('|^(.+)/ongoing/([^/]+)$|', '$1/failed/$2', $ongoingPathname);
             $deployDir = sprintf('%s/%s', $this->getContainer()->getParameter('deploys_root_dir'), $content['project']);
 
             $content['status'] = 'ongoing';
@@ -90,9 +94,10 @@ class InstallWorkerCommand extends ContainerAwareCommand
                 echo $buffer;
             });
 
-            $content['status'] = 'done';
+            $failed = mb_strlen($process->getErrorOutput()) > 0;
+            $content['status'] = $failed ? 'failed' : 'done';
             $this->rewriteFile($ongoingPathname, $content);
-            $this->fs->rename($ongoingPathname, $donePathname);
+            $this->fs->rename($ongoingPathname, $failed ? $failedPathname : $donePathname);
             $this->changeProjectStatusFile($content);
         }
     }
@@ -112,5 +117,17 @@ class InstallWorkerCommand extends ContainerAwareCommand
             'status' => $content['status'],
             'result' => isset($content['result']) ? $content['result'] : ''
         ], JSON_PRETTY_PRINT));
+    }
+
+    private function setOngoingToFailed(string $nodesDir)
+    {
+        $onGoingFiles = (new Finder())->files()->in(sprintf('%s/ongoing', $nodesDir));
+        foreach ($onGoingFiles as $file) {
+            /* @var \SplFileInfo $file */
+            $this->fs->rename(
+                $file->getPathname(),
+                preg_replace('|^(.+)/ongoing/([^/]+)$|', '$1/failed/$2', $file->getPathname())
+            );
+        }
     }
 }

@@ -279,6 +279,7 @@ class ProjectManager
             $this->filesystem->mkdir(sprintf('%s/pending', $this->nodesDir));
             $this->filesystem->mkdir(sprintf('%s/ongoing', $this->nodesDir));
             $this->filesystem->mkdir(sprintf('%s/done', $this->nodesDir));
+            $this->filesystem->mkdir(sprintf('%s/failed', $this->nodesDir));
         }
     }
 }
