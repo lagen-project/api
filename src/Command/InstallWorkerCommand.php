@@ -61,44 +61,54 @@ class InstallWorkerCommand extends ContainerAwareCommand
             $donePathname = preg_replace('|^(.+)/ongoing/([^/]+)$|', '$1/done/$2', $ongoingPathname);
             $failedPathname = preg_replace('|^(.+)/ongoing/([^/]+)$|', '$1/failed/$2', $ongoingPathname);
             $deployDir = sprintf('%s/%s', $this->getContainer()->getParameter('deploys_root_dir'), $content['project']);
+            $currentPathname = $file->getPathname();
 
-            $content['status'] = 'ongoing';
-            $this->rewriteFile($file->getPathname(), $content);
-            $this->fs->rename($file->getPathname(), $ongoingPathname);
-            $this->changeProjectStatusFile($content);
-
-            $git->cloneRepository($content['repository'], $content['project']);
-            if (isset($content['branch'])) {
-                $git->changeBranch($content['branch'], $content['project']);
-            }
-
-            $projectConfig = $projectConfigParser->parse($content['project']);
-            $configToDockerfileTransformer->transform($projectConfig, $content['project']);
-
-            if (!isset($content['result'])) {
-                $content['result'] = '';
-            }
-
-            $process = new Process(sprintf(
-                'docker build -t %s .',
-                $content['project']
-            ), $deployDir);
-            $process->setTimeout(0);
-            $process->start();
-            $output->writeln(sprintf('<fg=yellow>%s</>', $process->getCommandLine()));
-            $process->wait(function ($type, $buffer) use (&$content, $ongoingPathname) {
-                $content['result'] .= preg_replace('/[\x00-\x09\x0B\x0C\x0E-\x1F\x7F]/', '', $buffer);
-                $content['result'] = preg_replace('/\[0m\[\d+m/', "\n", $content['result']);
-                $this->rewriteFile($ongoingPathname, $content);
+            try {
+                $content['status'] = 'ongoing';
+                $this->rewriteFile($file->getPathname(), $content);
+                $this->fs->rename($file->getPathname(), $ongoingPathname);
+                $currentPathname = $ongoingPathname;
                 $this->changeProjectStatusFile($content);
-                echo $buffer;
-            });
 
-            $failed = mb_strlen($process->getErrorOutput()) > 0;
-            $content['status'] = $failed ? 'failed' : 'done';
-            $this->rewriteFile($ongoingPathname, $content);
-            $this->fs->rename($ongoingPathname, $failed ? $failedPathname : $donePathname);
-            $this->changeProjectStatusFile($content);
+                $git->cloneRepository($content['repository'], $content['project']);
+                if (isset($content['branch'])) {
+                    $git->changeBranch($content['branch'], $content['project']);
+                }
+
+                $projectConfig = $projectConfigParser->parse($content['project']);
+                $configToDockerfileTransformer->transform($projectConfig, $content['project']);
+
+                if (!isset($content['result'])) {
+                    $content['result'] = '';
+                }
+
+                $process = new Process(sprintf(
+                    'docker build -t %s .',
+                    $content['project']
+                ), $deployDir);
+                $process->setTimeout(0);
+                $process->start();
+                $output->writeln(sprintf('<fg=yellow>%s</>', $process->getCommandLine()));
+                $process->wait(function ($type, $buffer) use (&$content, $ongoingPathname) {
+                    $content['result'] .= preg_replace('/[\x00-\x09\x0B\x0C\x0E-\x1F\x7F]/', '', $buffer);
+                    $content['result'] = preg_replace('/\[0m\[\d+m/', "\n", $content['result']);
+                    $this->rewriteFile($ongoingPathname, $content);
+                    $this->changeProjectStatusFile($content);
+                    echo $buffer;
+                });
+
+                $failed = mb_strlen($process->getErrorOutput()) > 0;
+                $content['status'] = $failed ? 'failed' : 'done';
+                $this->rewriteFile($ongoingPathname, $content);
+                $this->fs->rename($ongoingPathname, $failed ? $failedPathname : $donePathname);
+                $currentPathname = $failed ? $failedPathname : $donePathname;
+                $this->changeProjectStatusFile($content);
+            } catch (\Exception $e) {
+                $content['status'] = 'failed';
+                $content['result'] = $e->getMessage();
+                $this->rewriteFile($ongoingPathname, $content);
+                $this->fs->rename($currentPathname, $failedPathname);
+            }
         }
     }
 
