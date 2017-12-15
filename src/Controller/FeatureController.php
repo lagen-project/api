@@ -56,6 +56,16 @@ class FeatureController extends Controller
     }
 
     /**
+     * @Route("/projects/{projectSlug}/features/{featureSlug}", methods={"DELETE"})
+     */
+    public function delete(string $projectSlug, string $featureSlug): Response
+    {
+        $this->get(FeatureManager::class)->deleteFeature($projectSlug, $featureSlug);
+
+        return new JsonResponse(null, Response::HTTP_NO_CONTENT);
+    }
+
+    /**
      * @Route("/projects/{projectSlug}/features/{featureSlug}/export", methods={"GET"})
      */
     public function export(string $projectSlug, string $featureSlug): Response

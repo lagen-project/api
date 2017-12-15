@@ -132,6 +132,15 @@ class FeatureManager
         );
     }
 
+    public function deleteFeature(string $projectSlug, string $featureSlug)
+    {
+        $featureFile = sprintf('%s/%s/%s', $this->projectsDir, $projectSlug, $featureSlug);
+
+        if ($this->filesystem->exists($featureFile)) {
+            $this->filesystem->remove($featureFile);
+        }
+    }
+
     public function exportFeature(string $projectSlug, string $featureSlug): Feature
     {
         return file_get_contents(
