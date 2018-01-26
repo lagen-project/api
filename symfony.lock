@@ -35,12 +35,6 @@
             "ref": "a249484db698d1a847a30291c8f732414ac47e25"
         }
     },
-    "paragonie/random_compat": {
-        "version": "v2.0.11"
-    },
-    "symfony/polyfill-php70": {
-        "version": "v1.6.0"
-    },
     "symfony/http-foundation": {
         "version": "v3.4.0"
     },
@@ -88,9 +82,6 @@
             "version": "3.3",
             "ref": "c0fdace641ed81c02668d6bfc0fc76a2b39ee7c9"
         }
-    },
-    "symfony/lts": {
-        "version": "v3"
     },
     "symfony/yaml": {
         "version": "v3.4.0"
@@ -292,12 +283,6 @@
     },
     "behat/behat": {
         "version": "v3.4.3"
-    },
-    "twig/twig": {
-        "version": "v2.4.4"
-    },
-    "sensio/generator-bundle": {
-        "version": "v3.1.6"
     },
     "symfony/phpunit-bridge": {
         "version": "3.3",
