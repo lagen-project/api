@@ -50,7 +50,7 @@ class User implements UserInterface
         $this->roles = $roles;
     }
 
-    public function setPassword(string $password)
+    public function setPassword(string $password): void
     {
         $this->password = $password;
     }
@@ -65,7 +65,7 @@ class User implements UserInterface
         return '';
     }
 
-    public function setUsername(string $username)
+    public function setUsername(string $username): void
     {
         $this->username = $username;
     }
@@ -75,7 +75,7 @@ class User implements UserInterface
         return $this->username;
     }
 
-    public function eraseCredentials()
+    public function eraseCredentials(): void
     {
         $this->password = '';
     }

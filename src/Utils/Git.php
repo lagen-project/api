@@ -25,14 +25,14 @@ class Git
         $this->deploysDir = $deploysDir;
     }
 
-    public function cloneRepository(string $repository, string $directory = '')
+    public function cloneRepository(string $repository, string $directory = ''): void
     {
         $dir = sprintf('%s/%s', $this->deploysDir, $directory);
         $this->processCommand(sprintf('rm -rf %s', $dir));
         $this->processCommand(sprintf('git clone %s %s', $repository, $dir));
     }
 
-    public function changeBranch(string $branch, string $directory = '')
+    public function changeBranch(string $branch, string $directory = ''): void
     {
         $this->processCommand(sprintf('cd %s && git checkout %s', $this->getDir($directory), $branch));
     }
@@ -71,7 +71,7 @@ class Git
         return $process->getOutput();
     }
 
-    private function createRootDirIfNotExists()
+    private function createRootDirIfNotExists(): void
     {
         if (!$this->filesystem->exists($this->deploysDir)) {
             $this->filesystem->mkdir($this->deploysDir);

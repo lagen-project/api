@@ -48,7 +48,7 @@ class ProjectConfig
         return $this->image;
     }
 
-    public function setImage(string $image)
+    public function setImage(string $image): void
     {
         $this->image = $image;
     }
@@ -58,7 +58,7 @@ class ProjectConfig
         return $this->env;
     }
 
-    public function setEnv(array $env)
+    public function setEnv(array $env): void
     {
         $this->env = $env;
     }
@@ -68,7 +68,7 @@ class ProjectConfig
         return $this->commands;
     }
 
-    public function setCommands(array $commands)
+    public function setCommands(array $commands): void
     {
         $this->commands = $commands;
     }
@@ -78,7 +78,7 @@ class ProjectConfig
         return $this->testCommand;
     }
 
-    public function setTestCommand(string $testCommand)
+    public function setTestCommand(string $testCommand): void
     {
         $this->testCommand = $testCommand;
     }

@@ -55,7 +55,7 @@ class Scenario
         return $this->type;
     }
 
-    public function setType(string $type)
+    public function setType(string $type): void
     {
         $this->type = $type;
     }
@@ -65,7 +65,7 @@ class Scenario
         return $this->name;
     }
 
-    public function setName(string $name)
+    public function setName(string $name): void
     {
         $this->name = $name;
     }
@@ -75,7 +75,7 @@ class Scenario
         return $this->feature;
     }
 
-    public function setFeature(Feature $feature = null)
+    public function setFeature(Feature $feature = null): void
     {
         $this->feature = $feature;
     }
@@ -91,7 +91,7 @@ class Scenario
     /**
      * @param Step[] $steps
      */
-    public function setSteps(array $steps = [])
+    public function setSteps(array $steps = []): void
     {
         $this->steps = $steps;
 
@@ -100,13 +100,13 @@ class Scenario
         }
     }
 
-    public function addStep(Step $step)
+    public function addStep(Step $step): void
     {
         $this->steps[] = $step;
         $step->setScenario($this);
     }
 
-    public function removeStep(Step $step)
+    public function removeStep(Step $step): void
     {
         foreach ($this->steps as $id => $s) {
             if ($s->getContent() === $step->getContent()) {
@@ -120,7 +120,7 @@ class Scenario
         return $this->examples;
     }
 
-    public function setExamples(array $examples = [])
+    public function setExamples(array $examples = []): void
     {
         $this->examples = $examples;
     }

@@ -56,7 +56,7 @@ class FeatureParser
      */
     private $consumeExamples;
 
-    private function init()
+    private function init(): void
     {
         $this->index = 0;
         $this->feature = null;
@@ -114,7 +114,7 @@ class FeatureParser
     /**
      * @throws FeatureLineDuplicatedException
      */
-    private function createFeature(string $line)
+    private function createFeature(string $line): void
     {
         if ($this->feature) {
             throw new FeatureLineDuplicatedException;
@@ -123,7 +123,7 @@ class FeatureParser
         $this->feature->setName(substr($line, 9));
     }
 
-    private function createScenario(string $line, string $type)
+    private function createScenario(string $line, string $type): void
     {
         $this->scenario = new Scenario();
         $this->feature->addScenario($this->scenario);
@@ -131,7 +131,7 @@ class FeatureParser
         $this->scenario->setType($type);
     }
 
-    private function createStep(string $line, string $type)
+    private function createStep(string $line, string $type): void
     {
         $this->step = new Step();
         switch ($type) {
@@ -162,7 +162,7 @@ class FeatureParser
         $this->step->setSentence(substr($line, $delimiter));
     }
 
-    private function consumeStringParameter()
+    private function consumeStringParameter(): void
     {
         $line = '';
         $this->index++;
@@ -176,7 +176,7 @@ class FeatureParser
         $this->step->setParameter($parameter);
     }
 
-    private function consumeDescription()
+    private function consumeDescription(): void
     {
         $description = '';
         $line = '';
@@ -189,7 +189,7 @@ class FeatureParser
         $this->feature->setDescription(trim($description));
     }
 
-    private function consumeTableParameter()
+    private function consumeTableParameter(): void
     {
         $parameter = new StepParameter();
         $parameter->setType(StepParameter::TYPE_TABLE);
@@ -203,7 +203,7 @@ class FeatureParser
         $this->step->setParameter($parameter);
     }
 
-    private function consumeExamples()
+    private function consumeExamples(): void
     {
         $value = [];
         $parameters = $this->tableStringToArray($this->contents[$this->index]);

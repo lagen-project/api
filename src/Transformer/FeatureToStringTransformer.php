@@ -70,7 +70,7 @@ class FeatureToStringTransformer
         return implode("\n", $asArray);
     }
 
-    private function transformType(int $type): string
+    private function transformType(string $type): string
     {
         $types = [
             Step::TYPE_GIVEN => 'Given',

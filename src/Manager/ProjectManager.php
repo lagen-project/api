@@ -124,7 +124,7 @@ class ProjectManager
     /**
      * @throws ProjectNotInstallableException
      */
-    public function installProject(string $projectSlug)
+    public function installProject(string $projectSlug): void
     {
         $projectConfig = $this->retrieveProjectConfig($projectSlug);
 
@@ -174,7 +174,7 @@ class ProjectManager
         );
     }
 
-    public function createProject(string $projectName)
+    public function createProject(string $projectName): void
     {
         $this->createRootDirIfNotExists();
         $slug = $this->slugify->slugify($projectName);
@@ -184,7 +184,7 @@ class ProjectManager
         ]);
     }
 
-    public function editProject(string $projectSlug, array $changes)
+    public function editProject(string $projectSlug, array $changes): void
     {
         $config = array_merge(
             $this->retrieveProjectConfig($projectSlug),
@@ -194,7 +194,7 @@ class ProjectManager
         $this->saveProjectConfig($projectSlug, $config);
     }
 
-    private function createRootDirIfNotExists()
+    private function createRootDirIfNotExists(): void
     {
         if (!$this->filesystem->exists($this->projectsDir)) {
             $this->filesystem->mkdir($this->projectsDir);
@@ -209,7 +209,7 @@ class ProjectManager
         );
     }
 
-    private function saveProjectConfig(string $projectSlug, array $config)
+    private function saveProjectConfig(string $projectSlug, array $config): void
     {
         $this->filesystem->dumpFile(
             sprintf('%s/%s/config.json', $this->projectsDir, $projectSlug),
@@ -272,7 +272,7 @@ class ProjectManager
         return $this->getFeaturesFinder($this->getProjectDirectory($projectSlug));
     }
 
-    private function createNodesDirsIfNotExists()
+    private function createNodesDirsIfNotExists(): void
     {
         if (!$this->filesystem->exists($this->nodesDir)) {
             $this->filesystem->mkdir($this->nodesDir);

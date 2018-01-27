@@ -32,7 +32,7 @@ class StepParameter
         return $this->type;
     }
 
-    public function setType(string $type)
+    public function setType(string $type): void
     {
         $this->type = $type;
     }
@@ -48,7 +48,7 @@ class StepParameter
     /**
      * @param array|string $value
      */
-    public function setValue($value)
+    public function setValue($value): void
     {
         $this->value = $value;
     }
@@ -58,7 +58,7 @@ class StepParameter
         return $this->step;
     }
 
-    public function setStep(Step $step = null)
+    public function setStep(Step $step = null): void
     {
         $this->step = $step;
     }
@@ -66,7 +66,7 @@ class StepParameter
     /**
      * @Serializer\HandlerCallback(direction="deserialization", format="json")
      */
-    public function deserialize(JsonDeserializationVisitor $visitor, array $data)
+    public function deserialize(JsonDeserializationVisitor $visitor, array $data): void
     {
         $this->type = $data['type'];
         $this->value = $data['value'];

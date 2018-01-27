@@ -23,7 +23,7 @@ class ProjectConfigToDockerfileTransformer
         $this->deployDir = $deployDir;
     }
 
-    public function transform(ProjectConfig $projectConfig, string $projectSlug)
+    public function transform(ProjectConfig $projectConfig, string $projectSlug): void
     {
         $content = [
             sprintf(

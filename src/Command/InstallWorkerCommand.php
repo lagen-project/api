@@ -19,7 +19,7 @@ class InstallWorkerCommand extends ContainerAwareCommand
      */
     private $fs;
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('app:worker:install')
@@ -27,7 +27,7 @@ class InstallWorkerCommand extends ContainerAwareCommand
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): void
     {
         $output->writeln('Install worker launched. Waiting for jobs to process... :)');
 
@@ -112,12 +112,12 @@ class InstallWorkerCommand extends ContainerAwareCommand
         }
     }
 
-    private function rewriteFile(string $destination, array $content)
+    private function rewriteFile(string $destination, array $content): void
     {
         $this->fs->dumpFile($destination, json_encode($content, JSON_PRETTY_PRINT));
     }
 
-    private function changeProjectStatusFile(array $content)
+    private function changeProjectStatusFile(array $content): void
     {
         $projectStatusFilename = sprintf(
             '%s/%s/job', $this->getContainer()->getParameter('projects_root_dir'), $content['project']
@@ -129,7 +129,7 @@ class InstallWorkerCommand extends ContainerAwareCommand
         ], JSON_PRETTY_PRINT));
     }
 
-    private function setOngoingToFailed(string $nodesDir)
+    private function setOngoingToFailed(string $nodesDir): void
     {
         $onGoingFiles = (new Finder())->files()->in(sprintf('%s/ongoing', $nodesDir));
         foreach ($onGoingFiles as $file) {

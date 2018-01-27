@@ -21,7 +21,7 @@ class OriginHttpHeaderSubscriber implements EventSubscriberInterface
         $this->allowedOrigins = $allowedOrigins;
     }
 
-    public function onKernelRequest(GetResponseEvent $event)
+    public function onKernelRequest(GetResponseEvent $event): void
     {
         if ($event->getRequest()->getMethod() === Request::METHOD_OPTIONS) {
             $response = new Response();
@@ -42,7 +42,7 @@ class OriginHttpHeaderSubscriber implements EventSubscriberInterface
         }
     }
 
-    public function onKernelResponse(FilterResponseEvent $event)
+    public function onKernelResponse(FilterResponseEvent $event): void
     {
         $response = $event->getResponse();
         $response->headers->add([

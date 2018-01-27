@@ -5,6 +5,7 @@ use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Core\Encoder\BCryptPasswordEncoder;
 
 class ApiContext extends ContainerAwareContext
 {
@@ -163,7 +164,7 @@ class ApiContext extends ContainerAwareContext
      */
     public function iHaveThisUserInDatabase(TableNode $table)
     {
-        $encoder = $this->getContainer()->get('security.encoder_factory')->getEncoder(User::class);
+        $encoder = new BCryptPasswordEncoder(13);
         foreach ($table->getHash() as $hash) {
             $user = new User();
 
