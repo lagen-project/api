@@ -141,7 +141,7 @@ class FeatureManager
         }
     }
 
-    public function exportFeature(string $projectSlug, string $featureSlug): Feature
+    public function exportFeature(string $projectSlug, string $featureSlug): string
     {
         return file_get_contents(
             sprintf('%s/%s/%s', $this->projectsDir, $projectSlug, $featureSlug)

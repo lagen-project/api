@@ -34,8 +34,7 @@ Feature: Project API
         "gitRepository": "",
         "gitBranch": "",
         "slug": "test-lagen-api",
-        "features": [],
-        "gitInfo": []
+        "features": []
     }
     """
 
