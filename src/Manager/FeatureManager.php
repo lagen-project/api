@@ -228,9 +228,32 @@ CMD
 
         $explodedOutput = explode(PHP_EOL, $process->getOutput());
         if (count($explodedOutput) >= 2) {
-            return $this->testResultParser->parse($explodedOutput[1], $feature);
+            $result = $this->testResultParser->parse($explodedOutput[1], $feature);
+            $this->storeResult($projectSlug, $featureSlug, $result);
+
+            return $result;
         }
 
         throw new FeatureRunErrorException($process->getOutput());
+    }
+
+    public function getResult(string $projectSlug, string $featureSlug): array
+    {
+        $filename = sprintf('%s/%s/%s.result', $this->projectsDir, $projectSlug, $featureSlug);
+
+        return $this->filesystem->exists($filename) ? json_decode(file_get_contents($filename), true) : [];
+    }
+
+    private function storeResult(string $projectSlug, string $featureSlug, array $result): void
+    {
+        $this->filesystem->dumpFile(
+            sprintf(
+                '%s/%s/%s.result',
+                $this->projectsDir,
+                $projectSlug,
+                $featureSlug
+            ),
+            json_encode($result, JSON_PRETTY_PRINT)
+        );
     }
 }

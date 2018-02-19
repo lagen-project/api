@@ -91,6 +91,14 @@ class FeatureController extends Controller
     }
 
     /**
+     * @Route("/projects/{projectSlug}/features/{featureSlug}/last-result", methods={"GET"})
+     */
+    public function lastResult(string $projectSlug, string $featureSlug): Response
+    {
+        return $this->handleResponse($this->get(FeatureManager::class)->getResult($projectSlug, $featureSlug));
+    }
+
+    /**
      * @Route("/projects/{projectSlug}/features/{featureSlug}/metadata", methods={"GET"})
      */
     public function getMetadata(string $projectSlug, string $featureSlug): Response
