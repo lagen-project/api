@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Exception\FeatureNotParsableException;
 use App\Exception\FeatureRunErrorException;
 use App\Manager\FeatureManager;
 use App\Model\Feature;
@@ -73,6 +74,28 @@ class FeatureController extends Controller
         return new Response(
             $this->get(FeatureManager::class)->exportFeature($projectSlug, $featureSlug)
         );
+    }
+
+    /**
+     * @Route("/projects/{projectSlug}/features/{featureSlug}/import", methods={"GET"})
+     */
+    public function import(string $projectSlug, string $featureSlug, Request $request): JsonResponse
+    {
+        try {
+            $this
+                ->get(FeatureManager::class)
+                ->importFeature(
+                    $projectSlug,
+                    $featureSlug,
+                    $request->get('feature_dir'),
+                    $request->get('feature_filename'),
+                    $request->get('content')
+                );
+        } catch (FeatureNotParsableException $e) {
+            return new JsonResponse(null, Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        return new JsonResponse(null, JsonResponse::HTTP_NO_CONTENT);
     }
 
     /**

@@ -2,8 +2,11 @@
 
 namespace App\Manager;
 
+use App\Exception\FeatureLineDuplicatedException;
+use App\Exception\FeatureNotParsableException;
 use App\Exception\FeatureRunErrorException;
 use App\Exception\ProjectConfigurationNotFoundException;
+use App\Exception\UnrecognizedLineTypeException;
 use App\Model\Feature;
 use App\Parser\FeatureParser;
 use App\Parser\ProjectConfigParser;
@@ -146,6 +149,34 @@ class FeatureManager
         return file_get_contents(
             sprintf('%s/%s/%s', $this->projectsDir, $projectSlug, $featureSlug)
         );
+    }
+
+    /**
+     * @throws FeatureNotParsableException
+     */
+    public function importFeature(
+        string $projectSlug,
+        string $featureSlug,
+        string $featureDir,
+        string $featureFilename,
+        string $featureContent
+    ): void {
+        try {
+            $feature = $this->featureParser->parse($featureContent);
+        } catch (FeatureLineDuplicatedException $e) {
+            throw new FeatureNotParsableException();
+        } catch (UnrecognizedLineTypeException $e) {
+            throw new FeatureNotParsableException();
+        }
+
+        $this->filesystem->dumpFile(
+            sprintf('%s/%s', $this->projectsDir, $featureSlug),
+            $this->featureToStringTransformer->transform($feature)
+        );
+        $this->setFeatureMetadata($projectSlug, $featureSlug, [
+            'dir' => $featureDir,
+            'filename' => $featureFilename
+        ]);
     }
 
     public function setFeatureMetadata(string $projectSlug, string $featureSlug, array $metadata): void
