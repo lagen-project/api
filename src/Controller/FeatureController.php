@@ -77,16 +77,15 @@ class FeatureController extends Controller
     }
 
     /**
-     * @Route("/projects/{projectSlug}/features/{featureSlug}/import", methods={"GET"})
+     * @Route("/projects/{projectSlug}/features/import", methods={"POST"})
      */
-    public function import(string $projectSlug, string $featureSlug, Request $request): JsonResponse
+    public function import(string $projectSlug, Request $request): JsonResponse
     {
         try {
             $this
                 ->get(FeatureManager::class)
                 ->importFeature(
                     $projectSlug,
-                    $featureSlug,
                     $request->get('feature_dir'),
                     $request->get('feature_filename'),
                     $request->get('content')

@@ -156,7 +156,6 @@ class FeatureManager
      */
     public function importFeature(
         string $projectSlug,
-        string $featureSlug,
         string $featureDir,
         string $featureFilename,
         string $featureContent
@@ -169,6 +168,7 @@ class FeatureManager
             throw new FeatureNotParsableException();
         }
 
+        $featureSlug = $this->slugify->slugify($feature->getName());
         $this->filesystem->dumpFile(
             sprintf('%s/%s', $this->projectsDir, $featureSlug),
             $this->featureToStringTransformer->transform($feature)
