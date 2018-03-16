@@ -194,6 +194,21 @@ class ProjectManager
         $this->saveProjectConfig($projectSlug, $config);
     }
 
+    public function deleteProject(string $projectSlug): void
+    {
+        $dirs = [
+            sprintf('%s/%s', $this->projectsDir, $projectSlug),
+            sprintf('%s/%s', $this->deploysDir, $projectSlug),
+            sprintf('%s/%s', $this->nodesDir, $projectSlug)
+        ];
+
+        foreach ($dirs as $dir) {
+            if ($this->filesystem->exists($dir)) {
+                $this->filesystem->remove($dir);
+            }
+        }
+    }
+
     private function createRootDirIfNotExists(): void
     {
         if (!$this->filesystem->exists($this->projectsDir)) {

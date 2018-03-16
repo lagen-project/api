@@ -59,6 +59,16 @@ class ProjectController extends Controller
     }
 
     /**
+     * @Route("/projects/{projectSlug}", methods={"DELETE"})
+     */
+    public function delete(string $projectSlug): JsonResponse
+    {
+        $this->get(ProjectManager::class)->deleteProject($projectSlug);
+
+        return new JsonResponse(null, Response::HTTP_NO_CONTENT);
+    }
+
+    /**
      * @Route("/projects/{projectSlug}/install", methods={"GET"})
      */
     public function install(string $projectSlug): JsonResponse
