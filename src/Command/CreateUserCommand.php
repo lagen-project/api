@@ -7,6 +7,7 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Security\Core\Encoder\BCryptPasswordEncoder;
 
 class CreateUserCommand extends ContainerAwareCommand
 {
@@ -23,10 +24,10 @@ class CreateUserCommand extends ContainerAwareCommand
     protected function execute(InputInterface $input, OutputInterface $output): void
     {
         $em = $this->getContainer()->get('doctrine.orm.entity_manager');
-        $encoder = $this->getContainer()->get('security.encoder_factory')->getEncoder(User::class);
         $user = new User();
         $user->setUsername($input->getArgument('username'));
-        $password = $encoder->encodePassword($input->getArgument('password'), '');
+        $password = (new BCryptPasswordEncoder($this->getContainer()->getParameter('security_bcrypt_cost')))
+            ->encodePassword($input->getArgument('password'), '');
         $user->setPassword($password);
         $user->setRoles(['ROLE_USER']);
 

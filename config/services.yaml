@@ -5,6 +5,7 @@ parameters:
     projects_root_dir: '%kernel.project_dir%/var/projects'
     deploys_root_dir: '%kernel.project_dir%/var/deploys'
     nodes_root_dir: '%kernel.project_dir%/var/nodes'
+    security_bcrypt_cost: 12
 
 services:
     # default configuration for services in *this* file
